@@ -6,7 +6,7 @@
     <PackageId>todo</PackageId>
     <Authors>mehmetseckin</Authors>
     <Product>todo</Product>
-    <Description>A CLI to manage to do items</Description>
+    <Description>A CLI to manage Microsoft To Do tasks</Description>
     <RepositoryUrl>https://github.com/mehmetseckin/todo-cli/</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>todo</PackageTags>
@@ -15,7 +15,7 @@
     <Version>0.0.0</Version>
     <AssemblyName>todo</AssemblyName>
     <NoWin32Manifest>true</NoWin32Manifest>
-    <StartupObject>Microsoft.Todo.CLI.Program</StartupObject>
+    <StartupObject>Todo.CLI.Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>

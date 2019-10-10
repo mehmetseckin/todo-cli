@@ -4,25 +4,13 @@ using System.CommandLine.Invocation;
 using System.IO;
 using System.Reflection;
 
-namespace Microsoft.Todo.CLI
+namespace Todo.CLI.Handlers
 {
-    class Program
+    public class TodoCommandHandler
     {
-        static int Main(string[] args)
+        public static ICommandHandler Create()
         {
-            // Define the root command
-            var rootCommand = new RootCommand
-            {
-                new Option(new string[] { "-v", "--version" } , "Prints out the todo CLI version.")
-                {
-                    Argument = new Argument<bool>()
-                }
-            };
-
-            rootCommand.Description = "A CLI to manage to do items.";
-
-            // Define handler
-            rootCommand.Handler = CommandHandler.Create<bool>((version) =>
+            return CommandHandler.Create<bool>((version) =>
             {
                 if (version)
                 {
@@ -30,8 +18,6 @@ namespace Microsoft.Todo.CLI
                     return;
                 }
             });
-
-            return rootCommand.InvokeAsync(args).Result;
         }
 
         private static void PrintVersion()
