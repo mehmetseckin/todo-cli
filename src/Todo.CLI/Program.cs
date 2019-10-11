@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Todo.Core;
 using Microsoft.Graph;
+using Todo.CLI.Auth;
 
 namespace Todo.CLI
 {

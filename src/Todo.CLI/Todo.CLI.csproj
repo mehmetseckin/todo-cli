@@ -19,11 +19,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="m0om4hc0.xba~" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" />
     <PackageReference Include="System.CommandLine.Experimental" Version="0.3.0-alpha.19405.1" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="4.6.0" />
   </ItemGroup>
 
   <ItemGroup>

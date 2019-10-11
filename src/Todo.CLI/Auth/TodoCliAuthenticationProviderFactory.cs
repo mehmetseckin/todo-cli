@@ -5,7 +5,7 @@ using Microsoft.Graph;
 using Microsoft.Graph.Auth;
 using Microsoft.Identity.Client;
 
-namespace Todo.CLI
+namespace Todo.CLI.Auth
 {
     static class TodoCliAuthenticationProviderFactory
     {
@@ -13,12 +13,14 @@ namespace Todo.CLI
         {
             var config = (TodoCliConfiguration)factory.GetService(typeof(TodoCliConfiguration));
 
-            IPublicClientApplication publicClientApplication = PublicClientApplicationBuilder
+            IPublicClientApplication app = PublicClientApplicationBuilder
                 .Create(config.ClientId)
                 .WithRedirectUri("http://localhost")
                 .Build();
+            
+            TokenCacheHelper.EnableSerialization(app.UserTokenCache);
 
-            return new InteractiveAuthenticationProvider(publicClientApplication, config.Scopes);
+            return new InteractiveAuthenticationProvider(app, config.Scopes);
         }
     }
 }
