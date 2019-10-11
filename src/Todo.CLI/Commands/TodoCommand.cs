@@ -9,16 +9,27 @@ namespace Todo.CLI.Commands
 {
     public class TodoCommand : RootCommand
     {
-        public TodoCommand()
+        public TodoCommand(IServiceProvider serviceProvider)
         {
+            // Add static parameters
             Description = "A CLI to manage to do items.";
+            
+            // Add options
+            AddOption(GetVersionOption());
+            
+            // Add handlers
+            Handler = TodoCommandHandler.Create();
 
-            AddOption(new Option(new string[] { "-v", "--version" }, "Prints out the todo CLI version.")
+            // Add subcommands
+            AddCommand(new ListCommand(serviceProvider));
+        }
+
+        private Option GetVersionOption()
+        {
+            return new Option(new string[] { "-v", "--version" }, "Prints out the todo CLI version.")
             {
                 Argument = new Argument<bool>()
-            });
-
-            Handler = TodoCommandHandler.Create();
+            };
         }
     }
 }
