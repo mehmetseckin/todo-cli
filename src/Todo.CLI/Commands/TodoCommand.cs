@@ -21,6 +21,7 @@ namespace Todo.CLI.Commands
             Handler = TodoCommandHandler.Create();
 
             // Add subcommands
+            AddCommand(new AddCommand(serviceProvider));
             AddCommand(new ListCommand(serviceProvider));
         }
 
