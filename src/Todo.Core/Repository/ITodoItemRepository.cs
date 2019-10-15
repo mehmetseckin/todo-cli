@@ -10,6 +10,6 @@ namespace Todo.Core
     public interface ITodoItemRepository
     {
         Task AddAsync(string subject);
-        Task<IEnumerable<TodoItem>> ListAsync();
+        Task<IEnumerable<TodoItem>> ListAsync(bool listAll);
     }
 }
