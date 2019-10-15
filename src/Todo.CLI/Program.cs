@@ -10,12 +10,13 @@ using Todo.Core;
 using Microsoft.Graph;
 using Todo.CLI.Auth;
 using Todo.Core.Repository;
+using System.Threading.Tasks;
 
 namespace Todo.CLI
 {
     class Program
     {
-        static int Main(string[] args)
+        static async Task<int> Main(string[] args)
         {
             var config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
@@ -30,9 +31,8 @@ namespace Todo.CLI
 
             var serviceProvider = services.BuildServiceProvider();
 
-            return new TodoCommand(serviceProvider)
-                .InvokeAsync(args)
-                .Result;
+            return await new TodoCommand(serviceProvider)
+                .InvokeAsync(args);
         }
     }
 }

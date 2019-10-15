@@ -12,7 +12,7 @@ namespace Todo.CLI.Commands
         public TodoCommand(IServiceProvider serviceProvider)
         {
             // Add static parameters
-            Description = "A CLI to manage to do items.";
+            Description = "A CLI to manage Microsoft to do items.";
             
             // Add options
             AddOption(GetVersionOption());
