@@ -3,11 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Todo.Core.Model;
 
 namespace Todo.Core
 {
-    public interface ITodoItemRetriever
+    public interface ITodoItemRepository
     {
-        Task<IEnumerable<OutlookTask>> ListAsync();
+        Task<IEnumerable<TodoItem>> ListAsync();
     }
 }
