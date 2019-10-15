@@ -13,7 +13,7 @@ namespace Todo.CLI.Handlers
         {
             return CommandHandler.Create(async () =>
             {
-                var todoItemRetriever = (ITodoItemRetriever)serviceProvider.GetService(typeof(ITodoItemRetriever));
+                var todoItemRetriever = (ITodoItemRepository)serviceProvider.GetService(typeof(ITodoItemRepository));
                 var todoItems = await todoItemRetriever.ListAsync();
                 foreach (var item in todoItems)
                 {

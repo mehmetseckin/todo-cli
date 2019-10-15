@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Todo.Core;
 using Microsoft.Graph;
 using Todo.CLI.Auth;
+using Todo.Core.Repository;
 
 namespace Todo.CLI
 {
@@ -25,7 +26,7 @@ namespace Todo.CLI
 
             var services = new ServiceCollection()
                 .AddSingleton(typeof(TodoCliConfiguration), todoCliConfig)
-                .AddTransient<ITodoItemRetriever>(factory => new TodoItemRetriever(TodoCliAuthenticationProviderFactory.GetAuthenticationProvider(factory)));
+                .AddTransient<ITodoItemRepository>(factory => new TodoItemRepository(TodoCliAuthenticationProviderFactory.GetAuthenticationProvider(factory)));
 
             var serviceProvider = services.BuildServiceProvider();
 
