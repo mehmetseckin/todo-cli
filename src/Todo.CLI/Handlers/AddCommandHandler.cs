@@ -4,6 +4,7 @@ using System.CommandLine.Invocation;
 using System.IO;
 using System.Reflection;
 using Todo.Core;
+using Todo.Core.Model;
 
 namespace Todo.CLI.Handlers
 {
@@ -14,7 +15,10 @@ namespace Todo.CLI.Handlers
             return CommandHandler.Create<string>(async (subject) =>
             {
                 var todoItemRepository = (ITodoItemRepository)serviceProvider.GetService(typeof(ITodoItemRepository));
-                await todoItemRepository.AddAsync(subject);
+                await todoItemRepository.AddAsync(new TodoItem()
+                {
+                    Subject = subject
+                });
             });
         }
     }
