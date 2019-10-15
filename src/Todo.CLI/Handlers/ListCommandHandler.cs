@@ -11,10 +11,10 @@ namespace Todo.CLI.Handlers
     {
         public static ICommandHandler Create(IServiceProvider serviceProvider)
         {
-            return CommandHandler.Create(async () =>
+            return CommandHandler.Create<bool>(async (all) =>
             {
                 var todoItemRetriever = (ITodoItemRepository)serviceProvider.GetService(typeof(ITodoItemRepository));
-                var todoItems = await todoItemRetriever.ListAsync();
+                var todoItems = await todoItemRetriever.ListAsync(all);
                 foreach (var item in todoItems)
                 {
                     Console.WriteLine(item.Subject);
