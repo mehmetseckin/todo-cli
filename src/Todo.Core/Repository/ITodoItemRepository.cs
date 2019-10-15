@@ -9,7 +9,7 @@ namespace Todo.Core
 {
     public interface ITodoItemRepository
     {
-        Task AddAsync(string subject);
+        Task AddAsync(TodoItem item);
         Task<IEnumerable<TodoItem>> ListAsync(bool listAll);
     }
 }
