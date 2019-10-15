@@ -15,6 +15,15 @@ namespace Todo.Core.Repository
         {
         }
 
+        public async Task AddAsync(string subject)
+        {
+            var graphServiceClient = new GraphServiceClient(AuthenticationProvider);
+            await graphServiceClient.Me.Outlook.Tasks.Request().AddAsync(new OutlookTask()
+            {
+                Subject = subject
+            });
+        }
+
         public async Task<IEnumerable<TodoItem>> ListAsync()
         {
             var graphServiceClient = new GraphServiceClient(AuthenticationProvider);
