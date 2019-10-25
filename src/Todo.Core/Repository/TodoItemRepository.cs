@@ -36,6 +36,7 @@ namespace Todo.Core.Repository
             var tasks = await request.GetAsync();
             return tasks.Select(task => new TodoItem() 
             { 
+                Id = task.Id,
                 Subject = task.Subject
             });
         }
