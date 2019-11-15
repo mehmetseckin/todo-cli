@@ -14,8 +14,6 @@ variables:
   outputDirectory: $(Build.ArtefactStagingDirectory)/$(runtimeIdentifier)/
 
 steps:
-- script: dotnet build $(solutionFile) -c $(buildConfiguration)
-  displayName: 'Build solution'
 - script: dotnet publish $(projectDirectory) -c $(buildConfiguration) -r $(runtimeIdentifier) -o $(outputDirectory) --self-contained true
   displayName: 'Publish self-contained executable for $(runtimeIdentifier)'
 - task: PublishBuildArtifacts@1
