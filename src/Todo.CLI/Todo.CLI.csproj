@@ -3,13 +3,13 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
-    <PackageId>todo</PackageId>
+    <PackageId>Todo.CLI</PackageId>
     <Authors>mehmetseckin</Authors>
-    <Product>todo</Product>
+    <Product>Todo CLI</Product>
     <Description>A CLI to manage Microsoft To Do tasks</Description>
     <RepositoryUrl>https://github.com/mehmetseckin/todo-cli/</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
-    <PackageTags>todo</PackageTags>
+    <PackageTags>microsoft-todo todo CLI</PackageTags>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
     <FileVersion>0.0.0.0</FileVersion>
     <Version>0.0.0</Version>
@@ -41,5 +41,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
+  
+  <ItemGroup>
+    <RuntimeHostConfigurationOption Include="System.Globalization.Invariant" Value="true" />
+  </ItemGroup>
+  
 </Project>
