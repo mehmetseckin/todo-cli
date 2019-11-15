@@ -18,6 +18,11 @@
     <StartupObject>Todo.CLI.Program</StartupObject>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <PublishTrimmed>true</PublishTrimmed>
+    <PublishReadyToRun>true</PublishReadyToRun>
+  </PropertyGroup>
+  
   <ItemGroup>
     <None Remove="m0om4hc0.xba~" />
   </ItemGroup>
