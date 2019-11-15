@@ -4,14 +4,14 @@ trigger:
 - master
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'windows-latest'
 
 variables:
   buildConfiguration: 'Release'
   solutionFile: $(Build.SourcesDirectory)/src/Todo.CLI.sln
   projectDirectory: $(Build.SourcesDirectory)/src/Todo.CLI/
   runtimeIdentifier: win10-x64
-  outputDirectory: $(Build.ArtefactStagingDirectory)/$(runtimeIdentifier)/
+  outputDirectory: $(Build.ArtifactStagingDirectory)/$(runtimeIdentifier)/
 
 steps:
 - script: dotnet publish $(projectDirectory) -c $(buildConfiguration) -r $(runtimeIdentifier) -o $(outputDirectory) --self-contained true

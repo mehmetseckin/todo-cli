@@ -11,7 +11,7 @@ variables:
   solutionFile: $(Build.SourcesDirectory)/src/Todo.CLI.sln
   projectDirectory: $(Build.SourcesDirectory)/src/Todo.CLI/
   runtimeIdentifier: osx-x64
-  outputDirectory: $(Build.ArtefactStagingDirectory)/$(runtimeIdentifier)/
+  outputDirectory: $(Build.ArtifactStagingDirectory)/$(runtimeIdentifier)/
 
 steps:
 - script: dotnet publish $(projectDirectory) -c $(buildConfiguration) -r $(runtimeIdentifier) -o $(outputDirectory) --self-contained true
