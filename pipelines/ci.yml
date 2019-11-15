@@ -6,8 +6,8 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
-  solution: ./src/Todo.CLI.sln
-  projectDirectory: ./src/Todo.CLI 
+  solution: $(Build.SourcesDirectory)/src/Todo.CLI.sln
+  projectDirectory: $(Build.SourcesDirectory)/src/Todo.CLI 
 
 steps:
 - script: dotnet build $solution --configuration $(buildConfiguration)
