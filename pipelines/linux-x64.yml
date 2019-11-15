@@ -1,0 +1,24 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  buildConfiguration: 'Release'
+  solutionFile: $(Build.SourcesDirectory)/src/Todo.CLI.sln
+  projectDirectory: $(Build.SourcesDirectory)/src/Todo.CLI/
+  runtimeIdentifier: linux-x64
+  outputDirectory: $(Build.ArtefactStagingDirectory)/$(runtimeIdentifier)/
+
+steps:
+- script: dotnet build $(solutionFile) -c $(buildConfiguration)
+  displayName: 'Build solution'
+- script: dotnet publish $(projectDirectory) -c $(buildConfiguration) -r $(runtimeIdentifier) --self-contained true
+  displayName: 'Publish self-contained executable for $(runtimeIdentifier)'
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish artefact for $(runtimeIdentifier)'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'todo-cli.$(runtimeIdentifier)'
+    publishLocation: 'Container'
