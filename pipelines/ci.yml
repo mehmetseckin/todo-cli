@@ -1,14 +1,17 @@
 trigger:
 - master
 
+pr:
+- master
+
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'ubuntu-latest'
 
 variables:
   buildConfiguration: 'Release'
-  solutionFile: $(Build.SourcesDirectory)\src\Todo.CLI.sln
-  projectDirectory: $(Build.SourcesDirectory)\src\Todo.CLI
+  solutionFile: $(Build.SourcesDirectory)/src/Todo.CLI.sln
 
 steps:
 - script: dotnet build $(solutionFile) --configuration $(buildConfiguration)
   displayName: 'Build solution'
+  
