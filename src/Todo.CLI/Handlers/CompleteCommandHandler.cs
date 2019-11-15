@@ -19,7 +19,7 @@ namespace Todo.CLI.Handlers
                 var todoItemRepository = (ITodoItemRepository)serviceProvider.GetService(typeof(ITodoItemRepository));
                 if (!string.IsNullOrEmpty(itemId))
                 {
-                    await todoItemRepository.CompleteAsync(new TodoItem() { Id = itemId });
+                    await CompleteItem(todoItemRepository, new TodoItem { Id = itemId });
                 }
                 else
                 {
@@ -30,10 +30,15 @@ namespace Todo.CLI.Handlers
                     var selectedItem = Question
                         .List("Which item would you like to complete?", items)
                         .Prompt();
-
-                    await todoItemRepository.CompleteAsync(selectedItem);
+                    await CompleteItem(todoItemRepository, selectedItem);
                 }
             });
+        }
+
+        private static async Task CompleteItem(ITodoItemRepository todoItemRepository, TodoItem selectedItem)
+        {
+            await todoItemRepository.CompleteAsync(selectedItem);
+            Console.Clear();
         }
     }
 }
