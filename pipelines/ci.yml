@@ -10,10 +10,10 @@ variables:
   projectDirectory: $(Build.SourcesDirectory)/src/Todo.CLI 
 
 steps:
-- script: dotnet build $solution --configuration $(buildConfiguration)
-  displayName: 'dotnet build $solution $(buildConfiguration)'
-- script: dotnet publish $projectDirectory --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)
-  displayName: 'dotnet publish $projectDirectory $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+- script: dotnet build $(solution) --configuration $(buildConfiguration)
+  displayName: 'dotnet build $(solution) $(buildConfiguration)'
+- script: dotnet publish $(projectDirectory) --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)
+  displayName: 'dotnet publish $(projectDirectory) $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
