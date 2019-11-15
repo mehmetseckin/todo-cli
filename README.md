@@ -52,3 +52,4 @@ This project is built using the following nuggets of awesomeness, and many more.
 - [.NET Core 3](https://github.com/dotnet/core)
 - [System.CommandLine](https://github.com/dotnet/command-line-api)
 - [Microsoft Graph Beta SDK](https://github.com/microsoftgraph/msgraph-beta-sdk-dotnet)
+- [Inquirer.cs](https://github.com/agolaszewski/Inquirer.cs)
