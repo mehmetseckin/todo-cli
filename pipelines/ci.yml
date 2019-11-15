@@ -6,12 +6,12 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
-  solution: $(Build.SourcesDirectory)/src/Todo.CLI.sln
+  solutionFile: $(Build.SourcesDirectory)/src/Todo.CLI.sln
   projectDirectory: $(Build.SourcesDirectory)/src/Todo.CLI 
 
 steps:
-- script: dotnet build $(solution) --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(solution) $(buildConfiguration)'
+- script: dotnet build $(solutionFile) --configuration $(buildConfiguration)
+  displayName: 'dotnet build $(solutionFile) $(buildConfiguration)'
 - script: dotnet publish $(projectDirectory) --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)
   displayName: 'dotnet publish $(projectDirectory) $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
 - task: PublishBuildArtifacts@1
