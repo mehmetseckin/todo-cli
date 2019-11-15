@@ -23,6 +23,7 @@ namespace Todo.CLI.Commands
             // Add subcommands
             AddCommand(new AddCommand(serviceProvider));
             AddCommand(new ListCommand(serviceProvider));
+            AddCommand(new CompleteCommand(serviceProvider));
         }
 
         private Option GetVersionOption()
