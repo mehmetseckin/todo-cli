@@ -25,6 +25,14 @@ namespace Todo.Core.Repository
             });
         }
 
+        public async Task CompleteAsync(TodoItem item)
+        {
+            var graphServiceClient = new GraphServiceClient(AuthenticationProvider);
+            var requestUrl = graphServiceClient.Me.Outlook.Tasks.AppendSegmentToRequestUrl($"{item.Id}/complete");
+            var builder = new OutlookTaskCompleteRequestBuilder(requestUrl, graphServiceClient);
+            await builder.Request().PostAsync();
+        }
+
         public async Task<IEnumerable<TodoItem>> ListAsync(bool listAll)
         {
             var graphServiceClient = new GraphServiceClient(AuthenticationProvider);

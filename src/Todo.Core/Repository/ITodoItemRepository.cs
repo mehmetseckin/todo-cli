@@ -11,5 +11,6 @@ namespace Todo.Core
     {
         Task AddAsync(TodoItem item);
         Task<IEnumerable<TodoItem>> ListAsync(bool listAll);
+        Task CompleteAsync(TodoItem item);
     }
 }

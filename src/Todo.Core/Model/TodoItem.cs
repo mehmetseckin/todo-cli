@@ -8,5 +8,6 @@ namespace Todo.Core.Model
     {
         public string Id { get; set; }
         public string Subject { get; set; }
+        public override string ToString() => Subject;
     }
 }
