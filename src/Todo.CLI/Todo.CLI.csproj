@@ -10,8 +10,8 @@
     <RepositoryUrl>https://github.com/mehmetseckin/todo-cli/</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>microsoft-todo todo CLI</PackageTags>
-    <AssemblyVersion>0.0.0.0</AssemblyVersion>
-    <FileVersion>0.0.0.0</FileVersion>
+    <AssemblyVersion>0.0.0</AssemblyVersion>
+    <FileVersion>0.0.0</FileVersion>
     <Version>0.0.0</Version>
     <AssemblyName>todo</AssemblyName>
     <NoWin32Manifest>true</NoWin32Manifest>
