@@ -1,0 +1,21 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  buildConfiguration: 'Release'
+  solution: ./src/Todo.CLI.sln
+  projectDirectory: ./src/Todo.CLI 
+
+steps:
+- script: dotnet build $solution --configuration $(buildConfiguration)
+  displayName: 'dotnet build $solution $(buildConfiguration)'
+- script: dotnet publish $projectDirectory --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)
+  displayName: 'dotnet publish $projectDirectory $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'todo-cli'
+    publishLocation: 'Container'
