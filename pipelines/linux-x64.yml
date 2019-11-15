@@ -16,11 +16,11 @@ variables:
 steps:
 - script: dotnet build $(solutionFile) -c $(buildConfiguration)
   displayName: 'Build solution'
-- script: dotnet publish $(projectDirectory) -c $(buildConfiguration) -r $(runtimeIdentifier) --self-contained true
+- script: dotnet publish $(projectDirectory) -c $(buildConfiguration) -r $(runtimeIdentifier) -o $(outputDirectory) --self-contained true
   displayName: 'Publish self-contained executable for $(runtimeIdentifier)'
 - task: PublishBuildArtifacts@1
   displayName: 'Publish artefact for $(runtimeIdentifier)'
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    PathtoPublish: '$(outputDirectory)'
     ArtifactName: 'todo-cli.$(runtimeIdentifier)'
     publishLocation: 'Container'
