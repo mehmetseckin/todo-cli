@@ -4,15 +4,31 @@ trigger:
 - master
 
 stages:
-- template: templates/stages/publish.yml
+- template: templates/stages/build.yml
   parameters:
     runtimeIdentifier: 'win10-x64'
     vmImage: 'windows-latest'
-- template: templates/stages/publish.yml
+- template: templates/stages/build.yml
   parameters:
     runtimeIdentifier: 'linux-x64'
     vmImage: 'ubuntu-latest'
-- template: templates/stages/publish.yml
+- template: templates/stages/build.yml
   parameters:
     runtimeIdentifier: 'osx-x64'
     vmImage: 'ubuntu-latest'
+- stage: 'Release'
+  jobs:
+  - job: 'Create GitHub release'
+    steps:
+    - download: current
+      displayName: 'Download all artifacts'
+    - task: GitHubRelease@1
+      inputs:
+        gitHubConnection: 'azure-pipelines-github-release'
+        repositoryName: '$(Build.Repository.Name)'
+        action: 'create'
+        target: '$(Build.SourceVersion)'
+        tagSource: 'gitTag'
+        assets: '$(Pipeline.Workspace)/*.zip'
+        changeLogCompareToRelease: 'lastFullRelease'
+        changeLogType: 'commitBased'
