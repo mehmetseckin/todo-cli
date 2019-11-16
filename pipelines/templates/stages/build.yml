@@ -1,10 +1,11 @@
 parameters:
+  name: ''
   runtimeIdentifier: 'win10-x64'
   vmImage: 'windows-latest'
   dependsOn: []
 
 stages:
-- stage: '${{ parameters.runtimeIdentifier }}'
+- stage: '${{ parameters.name }}'
 
   variables:
     buildConfiguration: 'Release'
@@ -15,7 +16,7 @@ stages:
 
   dependsOn: ${{ parameters.dependsOn }}
   jobs:
-  - job: 'Publish for ${{ parameters.runtimeIdentifier }}'
+  - job: 'publish_${{ parameters.name }}'
     pool:
       vmImage: ${{ parameters.vmImage }}
     steps:

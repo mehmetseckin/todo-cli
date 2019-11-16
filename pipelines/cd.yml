@@ -6,19 +6,22 @@ trigger:
 stages:
 - template: templates/stages/build.yml
   parameters:
+    name: 'win10_x64'
     runtimeIdentifier: 'win10-x64'
     vmImage: 'windows-latest'
 - template: templates/stages/build.yml
   parameters:
+    name: 'linux_x64'
     runtimeIdentifier: 'linux-x64'
     vmImage: 'ubuntu-latest'
 - template: templates/stages/build.yml
   parameters:
+    name: 'osx_x64'
     runtimeIdentifier: 'osx-x64'
     vmImage: 'ubuntu-latest'
 - stage: 'Release'
   jobs:
-  - job: 'Create GitHub release'
+  - job: 'create-github-release'
     steps:
     - download: current
       displayName: 'Download all artifacts'
