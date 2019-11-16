@@ -14,6 +14,6 @@ variables:
   solutionFile: $(Build.SourcesDirectory)/src/Todo.CLI.sln
 
 steps:
-- script: dotnet build $(solutionFile) --configuration $(buildConfiguration)
+- script: dotnet build $(solutionFile) --configuration $(buildConfiguration) /p:Version=$(Build.BuildNumber)
   displayName: 'Build solution'
   
