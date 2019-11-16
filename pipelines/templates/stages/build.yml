@@ -16,7 +16,7 @@ stages:
 
   dependsOn: ${{ parameters.dependsOn }}
   jobs:
-  - job: 'publish_${{ parameters.name }}'
+  - job: 'publish_${{ parameters.name }}_job'
     pool:
       vmImage: ${{ parameters.vmImage }}
     steps:

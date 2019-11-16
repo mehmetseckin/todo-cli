@@ -21,7 +21,7 @@ stages:
     vmImage: 'ubuntu-latest'
 - stage: 'Release'
   jobs:
-  - job: 'create-github-release'
+  - job: 'release_job'
     steps:
     - download: current
       displayName: 'Download all artifacts'
