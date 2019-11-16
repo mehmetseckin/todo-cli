@@ -21,6 +21,10 @@ A cross-platform command-line interface to interact with Microsoft To Do, built 
 
 ## Getting Started
 
+### Install
+
+If you just want to give it a spin, head over to [releases](https://github.com/mehmetseckin/todo-cli/releases/). Download a release and extract to somewhere in your `PATH`, and run `todo --help` to get started.
+
 ### Build
 
 ```
