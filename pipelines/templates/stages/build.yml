@@ -3,15 +3,16 @@ parameters:
   vmImage: 'windows-latest'
   dependsOn: []
 
-variables:
-  buildConfiguration: 'Release'
-  solutionFile: $(Build.SourcesDirectory)/src/Todo.CLI.sln
-  projectDirectory: $(Build.SourcesDirectory)/src/Todo.CLI/
-  outputDirectory: $(Build.ArtifactStagingDirectory)/${{ parameters.runtimeIdentifier }}/
-  artifactName: 'todo.$(Build.BuildNumber).${{ parameters.runtimeIdentifier }}'
-
 stages:
 - stage: '${{ parameters.runtimeIdentifier }}'
+
+  variables:
+    buildConfiguration: 'Release'
+    solutionFile: $(Build.SourcesDirectory)/src/Todo.CLI.sln
+    projectDirectory: $(Build.SourcesDirectory)/src/Todo.CLI/
+    outputDirectory: $(Build.ArtifactStagingDirectory)/${{ parameters.runtimeIdentifier }}/
+    artifactName: 'todo.$(Build.BuildNumber).${{ parameters.runtimeIdentifier }}'
+
   dependsOn: ${{ parameters.dependsOn }}
   jobs:
   - job: 'Publish for ${{ parameters.runtimeIdentifier }}'
