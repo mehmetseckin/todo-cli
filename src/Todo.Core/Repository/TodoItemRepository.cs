@@ -33,6 +33,14 @@ namespace Todo.Core.Repository
             await builder.Request().PostAsync();
         }
 
+        public async Task DeleteAsync(TodoItem item)
+        {
+            var graphServiceClient = new GraphServiceClient(AuthenticationProvider);
+            var requestUrl = graphServiceClient.Me.Outlook.Tasks.AppendSegmentToRequestUrl($"{item.Id}");
+            var builder = new OutlookTaskRequestBuilder(requestUrl, graphServiceClient);
+            await builder.Request().DeleteAsync();
+        }
+
         public async Task<IEnumerable<TodoItem>> ListAsync(bool listAll)
         {
             var graphServiceClient = new GraphServiceClient(AuthenticationProvider);

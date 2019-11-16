@@ -1,4 +1,5 @@
-﻿using Microsoft.Graph;
+﻿
+using Microsoft.Graph;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,5 +13,6 @@ namespace Todo.Core
         Task AddAsync(TodoItem item);
         Task<IEnumerable<TodoItem>> ListAsync(bool listAll);
         Task CompleteAsync(TodoItem item);
+        Task DeleteAsync(TodoItem item);
     }
 }
