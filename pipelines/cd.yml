@@ -1,0 +1,18 @@
+name: 0.1.0$(rev:.r)
+
+trigger:
+- master
+
+stages:
+- template: templates/stages/publish.yml
+  parameters:
+    runtimeIdentifier: 'win10-x64'
+    vmImage: 'windows-latest'
+- template: templates/stages/publish.yml
+  parameters:
+    runtimeIdentifier: 'linux-x64'
+    vmImage: 'ubuntu-latest'
+- template: templates/stages/publish.yml
+  parameters:
+    runtimeIdentifier: 'osx-x64'
+    vmImage: 'ubuntu-latest'

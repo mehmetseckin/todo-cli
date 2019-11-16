@@ -1,0 +1,25 @@
+parameters:
+  runtimeIdentifier: 'win10-x64'
+  vmImage: 'windows-latest'
+  dependsOn: []
+
+variables:
+  buildConfiguration: 'Release'
+  solutionFile: $(Build.SourcesDirectory)/src/Todo.CLI.sln
+  projectDirectory: $(Build.SourcesDirectory)/src/Todo.CLI/
+  outputDirectory: $(Build.ArtifactStagingDirectory)/${{ parameters.runtimeIdentifier }}/
+  artifactName: 'todo.$(Build.BuildNumber).${{ parameters.runtimeIdentifier }}'
+
+stages:
+- stage: '${{ parameters.runtimeIdentifier }}'
+  dependsOn: ${{ parameters.dependsOn }}
+  jobs:
+  - job: 'Publish for ${{ parameters.runtimeIdentifier }}'
+    pool:
+      vmImage: ${{ parameters.vmImage }}
+    steps:
+    - script: dotnet publish $(projectDirectory) -c $(buildConfiguration) -r ${{ parameters.runtimeIdentifier }} -o $(outputDirectory) /p:Version=$(Build.BuildNumber) --self-contained true
+      displayName: 'Publish as self-contained executable for ${{ parameters.runtimeIdentifier }}'
+    - publish: '$(outputDirectory)'
+      displayName: 'Publish artefact for ${{ parameters.runtimeIdentifier }}'
+      artifact: '$(artifactName)'
