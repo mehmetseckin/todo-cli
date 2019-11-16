@@ -12,6 +12,7 @@ namespace Todo.CLI.Commands
             Description = "Retrieves a list of the to do items.";
 
             AddOption(GetAllOption());
+            AddOption(GetNoStatusOption());
 
             Handler = ListCommandHandler.Create(serviceProvider);
         }
@@ -20,5 +21,11 @@ namespace Todo.CLI.Commands
         {
             return new Option(new string[] { "-a", "--all" }, "Lists all to do items including the completed ones.");
         }
+
+        private Option GetNoStatusOption()
+        {
+            return new Option(new string[] { "--no-status" }, "Suppresses the bullet indicating whether the item is completed or not.");
+        }
+
     }
 }

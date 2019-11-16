@@ -45,7 +45,8 @@ namespace Todo.Core.Repository
             return tasks.Select(task => new TodoItem() 
             { 
                 Id = task.Id,
-                Subject = task.Subject
+                Subject = task.Subject,
+                IsCompleted = task.Status == TaskStatus.Completed
             });
         }
     }
