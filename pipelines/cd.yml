@@ -25,9 +25,9 @@ stages:
 - stage: 'Release'
   variables:
     artifactsDirectory: '$(Pipeline.Workspace)/artifacts'
-    win10_x64_artifactPath: '$(artifactsDirectory)/todo.$(build.buildNumber).win10-x64/'
-    linux_x64_artifactPath: '$(artifactsDirectory)/todo.$(build.buildNumber).linux-x64/'
-    osx_x64_artifactPath: '$(artifactsDirectory)/todo.$(build.buildNumber).osx-x64/'
+    win10_x64_artifactPath: '$(artifactsDirectory)/todo.$(build.buildNumber).win10-x64'
+    linux_x64_artifactPath: '$(artifactsDirectory)/todo.$(build.buildNumber).linux-x64'
+    osx_x64_artifactPath: '$(artifactsDirectory)/todo.$(build.buildNumber).osx-x64'
   dependsOn: ['win10_x64', 'linux_x64', 'osx_x64']
   jobs:
   - job: 'release_job'
