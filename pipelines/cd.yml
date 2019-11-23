@@ -1,4 +1,4 @@
-variables:
+'variables:
   version: '0.1.3'
 
 name: $(version)$(rev:.r)
@@ -38,13 +38,13 @@ stages:
       inputs:
         targetPath: '$(artifactsDirectory)'
     - task: ArchiveFiles@2
-      displayName: "Create $(win10_x64_artifactPath).zip"
+      displayName: 'Create $(win10_x64_artifactPath).zip'
       inputs:
         rootFolderOrFile: '$(win10_x64_artifactPath)' 
         includeRootFolder: false 
         archiveFile: '$(win10_x64_artifactPath).zip' 
     - task: ArchiveFiles@2
-      displayName: "Create $(linux_x64_artifactPath).tar.gz"
+      displayName: 'Create $(linux_x64_artifactPath).tar.gz'
       inputs:
         rootFolderOrFile: '$(linux_x64_artifactPath)' 
         includeRootFolder: false 
@@ -52,7 +52,7 @@ stages:
         archiveType: 'tar'
         tarCompression: 'gz'
     - task: ArchiveFiles@2
-      displayName: "Create $(osx_x64_artifactPath).tar.gz"
+      displayName: 'Create $(osx_x64_artifactPath).tar.gz'
       inputs:
         rootFolderOrFile: '$(osx_x64_artifactPath)' 
         includeRootFolder: false 
@@ -72,4 +72,4 @@ stages:
         changeLogCompareToRelease: 'lastFullRelease'
         changeLogType: 'commitBased'
         isDraft: true
-        isPreRelease: true
+        isPreRelease: true'
