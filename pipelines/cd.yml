@@ -33,6 +33,7 @@ stages:
   - job: 'release_job'
     steps:
     - script: mkdir $(artifactsDirectory)
+      displayName: 'Create $(artifactsDirectory) directory'
     - task: DownloadPipelineArtifact@2
       displayName: 'Download all artifacts'
       inputs:
