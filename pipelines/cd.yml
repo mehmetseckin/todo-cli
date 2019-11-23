@@ -65,7 +65,7 @@ stages:
         repositoryName: '$(Build.Repository.Name)'
         action: 'create'
         target: '$(Build.SourceVersion)'
-        tagSource: 'auto'
+        tagSource: 'gitTag'
         assets: |
           $(artifactsDirectory)/*.zip
           $(artifactsDirectory)/*.tar.gz
