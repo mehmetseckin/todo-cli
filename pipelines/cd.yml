@@ -72,5 +72,4 @@ stages:
           $(artifactsDirectory)/*.tar.gz
         changeLogCompareToRelease: 'lastFullRelease'
         changeLogType: 'commitBased'
-        isDraft: true
-        isPreRelease: true'
+        isPreRelease: true
