@@ -1,4 +1,7 @@
-name: 0.1.0$(rev:.r)
+variables:
+  version: '0.1.0'
+
+name: $(version)$(rev:.r)
 
 trigger:
 - master
@@ -20,19 +23,53 @@ stages:
     runtimeIdentifier: 'osx-x64'
     vmImage: 'ubuntu-latest'
 - stage: 'Release'
+  variables:
+    artifactsDirectory: '$(Pipeline.Workspace)/artifacts'
+    win10_x64_artifactPath: '$(artifactsDirectory)/todo.$(build.buildNumber).win10-x64/'
+    linux_x64_artifactPath: '$(artifactsDirectory)/todo.$(build.buildNumber).linux-x64/'
+    osx_x64_artifactPath: '$(artifactsDirectory)/todo.$(build.buildNumber).osx-x64/'
   dependsOn: ['win10_x64', 'linux_x64', 'osx_x64']
   jobs:
   - job: 'release_job'
     steps:
-    - download: current
+    - script: md $(artifactsDirectory)
+    - task: DownloadPipelineArtifact@2
       displayName: 'Download all artifacts'
+      inputs:
+        targetPath: '$(artifactsDirectory)'
+    - task: ArchiveFiles@2
+      displayName: "Create $(win10_x64_artifactPath).zip"
+      inputs:
+        rootFolderOrFile: '$(win10_x64_artifactPath)' 
+        includeRootFolder: false 
+        archiveFile: '$(win10_x64_artifactPath).zip' 
+    - task: ArchiveFiles@2
+      displayName: "Create $(linux_x64_artifactPath).tar.gz"
+      inputs:
+        rootFolderOrFile: '$(linux_x64_artifactPath)' 
+        includeRootFolder: false 
+        archiveFile: '$(linux_x64_artifactPath).tar.gz' 
+        archiveType: 'tar'
+        tarCompression: 'gz'
+    - task: ArchiveFiles@2
+      displayName: "Create $(osx_x64_artifactPath).tar.gz"
+      inputs:
+        rootFolderOrFile: '$(osx_x64_artifactPath)' 
+        includeRootFolder: false 
+        archiveFile: '$(osx_x64_artifactPath).tar.gz' 
+        archiveType: 'tar'
+        tarCompression: 'gz'        
     - task: GitHubRelease@1
       inputs:
         gitHubConnection: 'azure-pipelines-github-release'
         repositoryName: '$(Build.Repository.Name)'
         action: 'create'
         target: '$(Build.SourceVersion)'
-        tagSource: 'gitTag'
-        assets: '$(Pipeline.Workspace)/*.zip'
+        tagSource: 'auto'
+        assets: |
+          $(artifactsDirectory)/*.zip
+          $(artifactsDirectory)/*.tar.gz
         changeLogCompareToRelease: 'lastFullRelease'
         changeLogType: 'commitBased'
+        isDraft: true
+        isPreRelease: true
