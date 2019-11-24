@@ -1,8 +1,10 @@
 ﻿using InquirerCS;
 using System;
+using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Todo.Core;
@@ -12,6 +14,9 @@ namespace Todo.CLI.Handlers
 {
     public class RemoveCommandHandler
     {
+        private const string PromptMessage = "Which item(s) would you like to delete?";
+        private const string UIHelpMessage = "Use arrow keys to navigate between options. [SPACEBAR] to mark the options, and [ENTER] to confirm your input.";
+
         public static ICommandHandler Create(IServiceProvider serviceProvider)
         {
             return CommandHandler.Create(async () =>
@@ -22,17 +27,22 @@ namespace Todo.CLI.Handlers
                 var items = await todoItemRepository.ListAsync(listAll: true);
 
                 // Ask user which item to delete
-                var selectedItem = Question
-                    .List("Which item(s) would you like to delete?", items)
+                var message = PromptMessage 
+                            + Environment.NewLine 
+                            + Environment.NewLine
+                            + UIHelpMessage;
+
+                var selectedItems = Question
+                    .Checkbox(message, items)
                     .Prompt();
             
-                await DeleteItem(todoItemRepository, selectedItem);
+                DeleteItems(todoItemRepository, selectedItems);
             });
         }
 
-        private static async Task DeleteItem(ITodoItemRepository todoItemRepository, TodoItem selectedItem)
+        private static void DeleteItems(ITodoItemRepository todoItemRepository, IEnumerable<TodoItem> selectedItems)
         {
-            await todoItemRepository.DeleteAsync(selectedItem);
+            Task.WaitAll(selectedItems.Select(item => todoItemRepository.DeleteAsync(item)).ToArray());
             Console.Clear();
         }
     }
