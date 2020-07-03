@@ -15,7 +15,7 @@ namespace Todo.CLI.Auth
 
             IPublicClientApplication app = PublicClientApplicationBuilder
                 .Create(config.ClientId)
-                .WithRedirectUri("todo://auth-callback")
+                .WithRedirectUri("http://localhost") // Only loopback redirect uri is supported, see https://aka.ms/msal-net-os-browser for details
                 .Build();
             
             TokenCacheHelper.EnableSerialization(app.UserTokenCache);
