@@ -11,6 +11,7 @@ namespace Todo.Core
     public interface ITodoItemRepository
     {
         Task AddAsync(TodoItem item);
+        IAsyncEnumerable<TodoItem> ListAsyncEnumerable(bool listAll);
         Task<IEnumerable<TodoItem>> ListAsync(bool listAll);
         Task CompleteAsync(TodoItem item);
         Task DeleteAsync(TodoItem item);

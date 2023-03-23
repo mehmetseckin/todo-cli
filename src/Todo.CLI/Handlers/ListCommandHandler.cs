@@ -18,9 +18,9 @@ namespace Todo.CLI.Handlers
             return CommandHandler.Create<bool, bool>(async (all, noStatus) =>
             {
                 var todoItemRetriever = (ITodoItemRepository)serviceProvider.GetService(typeof(ITodoItemRepository));
-                var todoItems = await todoItemRetriever.ListAsync(all);
+                var todoItemsAsync = todoItemRetriever.ListAsyncEnumerable(all);
 
-                foreach (var item in todoItems)
+                await foreach (var item in todoItemsAsync)
                 {
                     if(!noStatus)
                     {

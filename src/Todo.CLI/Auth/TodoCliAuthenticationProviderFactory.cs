@@ -20,7 +20,8 @@ namespace Todo.CLI.Auth
             
             TokenCacheHelper.EnableSerialization(app.UserTokenCache);
 
-            return new InteractiveAuthenticationProvider(app, config.Scopes);
+            var authProvider = new InteractiveAuthenticationProvider(app, config.Scopes);
+            return authProvider;
         }
     }
 }

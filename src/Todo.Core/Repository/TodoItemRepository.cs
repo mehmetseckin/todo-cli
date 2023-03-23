@@ -43,19 +43,41 @@ namespace Todo.Core.Repository
 
         public async Task<IEnumerable<TodoItem>> ListAsync(bool listAll)
         {
+            var listAsync = ListAsyncEnumerable(listAll);
+
+            // TODO: dpr032223 - ToListAsync() not in .NETCore 3.0
+            var list = new List<TodoItem>();
+            await foreach (var item in listAsync)
+                list.Add(item);
+            return list;
+        }
+
+        public async IAsyncEnumerable<TodoItem> ListAsyncEnumerable(bool listAll)
+        {
             var graphServiceClient = new GraphServiceClient(AuthenticationProvider);
+
+
+
             var request = graphServiceClient.Me.Outlook.Tasks.Request();
             if(!listAll)
             {
                 request.Filter($"status ne '{TaskStatus.Completed.ToString().ToLower()}'");
             }
-            var tasks = await request.GetAsync();
-            return tasks.Select(task => new TodoItem() 
-            { 
-                Id = task.Id,
-                Subject = task.Subject,
-                IsCompleted = task.Status == TaskStatus.Completed
-            });
+            // drp032223 - only pulls 10, so need to loop on each page
+            while (request != null)
+            {
+                var tasksPage = await request.GetAsync();
+                foreach (var task in tasksPage)
+                {
+                    yield return new TodoItem()
+                    {
+                        Id = task.Id,
+                        Subject = task.Subject,
+                        IsCompleted = task.Status == TaskStatus.Completed
+                    };
+                }
+                request = tasksPage.NextPageRequest;
+            }
         }
     }
 }

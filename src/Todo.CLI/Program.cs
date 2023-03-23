@@ -1,8 +1,4 @@
-﻿/* TODO: drp032223
- * 1) Export - write out one giant JSON (or other format?)
- * 2) Sync - write out one JSON per task to OutputFolder
- */
-
+﻿
 using Todo.CLI.Commands;
 using System;
 using System.CommandLine;
