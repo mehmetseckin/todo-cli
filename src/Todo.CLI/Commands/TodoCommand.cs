@@ -9,7 +9,7 @@ namespace Todo.CLI.Commands
 {
     public class TodoCommand : RootCommand
     {
-        public TodoCommand(IServiceProvider serviceProvider)
+        public TodoCommand(IServiceProvider serviceProvider, TodoCliConfiguration config)
         {
             // Add static parameters
             Description = "A CLI to manage Microsoft to do items.";
@@ -21,10 +21,13 @@ namespace Todo.CLI.Commands
             Handler = TodoCommandHandler.Create();
 
             // Add subcommands
-            AddCommand(new AddCommand(serviceProvider));
             AddCommand(new ListCommand(serviceProvider));
-            AddCommand(new CompleteCommand(serviceProvider));
-            AddCommand(new RemoveCommand(serviceProvider));
+            if (config.SupportsWrite)
+            {
+                AddCommand(new AddCommand(serviceProvider));
+                AddCommand(new CompleteCommand(serviceProvider));
+                AddCommand(new RemoveCommand(serviceProvider));
+            }
         }
 
         private Option GetVersionOption()

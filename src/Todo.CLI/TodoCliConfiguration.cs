@@ -8,5 +8,6 @@ namespace Todo.CLI
     {
         public string ClientId { get; set; }
         public IEnumerable<string> Scopes { get; set; }
+        public bool SupportsWrite { get; set; }
     }
 }

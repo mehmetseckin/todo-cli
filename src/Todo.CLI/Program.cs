@@ -1,4 +1,9 @@
-﻿using Todo.CLI.Commands;
+﻿/* TODO: drp032223
+ * 1) Export - write out one giant JSON (or other format?)
+ * 2) Sync - write out one JSON per task to OutputFolder
+ */
+
+using Todo.CLI.Commands;
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
@@ -31,7 +36,7 @@ namespace Todo.CLI
 
             var serviceProvider = services.BuildServiceProvider();
 
-            return await new TodoCommand(serviceProvider)
+            return await new TodoCommand(serviceProvider, todoCliConfig)
                 .InvokeAsync(args);
         }
     }
