@@ -4,7 +4,7 @@ using Todo.CLI.Handlers;
 using Todo.Core;
 using Todo.Core.Model;
 
-namespace Todo.CLI.Commands
+namespace MSTTool.Archive
 {
     public class RemoveCommand : Command
     {

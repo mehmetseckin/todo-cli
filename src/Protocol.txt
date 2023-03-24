@@ -1,0 +1,85 @@
+HIST:
+drp032323 - updated
+
+JSONS /lists response
+Content:
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('EMAILUSERNAME%40hotmail.com')/todo/lists",
+  "@odata.nextLink": "https://graph.microsoft.com/v1.0/me/todo/lists?$skip=50",
+  "value": [
+    {
+      "@odata.etag": "W/\"rUIjU8NJN0aB7BwuPLdcMAAGqyAOCQ==\"",
+      "displayName": "LISTNAME",
+      "isOwner": true,
+      "isShared": false,
+      "wellknownListName": "defaultList",
+      "id": "AQMkADAwATEwYmM3LTU4NjktYTUxYS0wMAItMDAKAC4AAAOEN7IbTiy5RKcfAAfx3varAQCtQiNTw0k3RoHsHC48t1wwAAACARIAAAA="
+    },
+    {
+      "@odata.etag": "W/\"rUIjU8NJN0aB7BwuPLdcMAAGqyAODw==\"",
+      "displayName": "LISTNAME",
+      "isOwner": true,
+      "isShared": false,
+      "wellknownListName": "none",
+      "id": "AQMkADAwATEwYmM3LTU4NjktYTUxYS0wMAItMDAKAC4AAAOEN7IbTiy5RKcfAAfx3varAQCtQiNTw0k3RoHsHC48t1wwAAU0APXtAAAA"
+    },
+  ]
+}
+
+
+JSON /{{list}}/tasks response
+# TODO: drp032323 - images look like what?
+Content:
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('EMAILUSERNAME%40hotmail.com')/todo/lists('AQMkADAwATEwYmM3LTU4NjktYTUxYS0wMAItMDAKAC4AAAOEN7IbTiy5RKcfAAfx3varAQCtQiNTw0k3RoHsHC48t1wwAAMql8UPAAAA')/tasks",
+  "value": [
+    {
+      "@odata.etag": "W/\"rUIjU8NJN0aB7BwuPLdcMAAGkziqLA==\"",
+      "importance": "normal",
+      "isReminderOn": false,
+      "status": "notStarted",
+      "title": "TASKTITLE",
+      "createdDateTime": "2022-05-05T22:25:58.7733259Z",
+      "lastModifiedDateTime": "2023-02-11T00:11:54.5847607Z",
+      "hasAttachments": false,
+      "categories": [],
+      "id": "AQMkADAwATEwYmM3LTU4NjktYTUxYS0wMAItMDAKAEYAAAOEN7IbTiy5RKcfAAfx3varBwCtQiNTw0k3RoHsHC48t1wwAAMql8UPAAAArUIjU8NJN0aB7BwuPLdcMAAGktwqlwAAAA==",
+      "body": {
+        "content": "TASKNOTES",
+        "contentType": "text"
+      },
+      "checklistItems@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('EMAILUSERNAME%40hotmail.com')/todo/lists('AQMkADAwATEwYmM3LTU4NjktYTUxYS0wMAItMDAKAC4AAAOEN7IbTiy5RKcfAAfx3varAQCtQiNTw0k3RoHsHC48t1wwAAMql8UPAAAA')/tasks('AQMkADAwATEwYmM3LTU4NjktYTUxYS0wMAItMDAKAEYAAAOEN7IbTiy5RKcfAAfx3varBwCtQiNTw0k3RoHsHC48t1wwAAMql8UPAAAArUIjU8NJN0aB7BwuPLdcMAAGktwqlwAAAA%3D%3D')/checklistItems",
+      "checklistItems": [
+        {
+          "displayName": "SUBTASKTITLE",
+          "createdDateTime": "2022-05-05T22:26:07.7199032Z",
+          "checkedDateTime": "2022-05-07T14:47:15.5658684Z",
+          "isChecked": true,
+          "id": "32da999e-acbc-4f1d-b7c5-a5c9dcbc284c"
+        },
+        {
+          "displayName": "SUBTASKTITLE",
+          "createdDateTime": "2022-05-06T23:31:20.7224936Z",
+          "isChecked": false,
+          "id": "2b66055a-033b-4578-a826-26aefc7426fc"
+        },
+      ]
+    },
+    {
+      "@odata.etag": "W/\"rUIjU8NJN0aB7BwuPLdcMAADo6AINQ==\"",
+      "importance": "normal",
+      "isReminderOn": false,
+      "status": "notStarted",
+      "title": "TASKTITLE",
+      "createdDateTime": "2019-06-20T02:03:45.0253466Z",
+      "lastModifiedDateTime": "2019-12-21T23:27:17.5867361Z",
+      "hasAttachments": false,
+      "categories": [],
+      "id": "AQMkADAwATEwYmM3LTU4NjktYTUxYS0wMAItMDAKAEYAAAOEN7IbTiy5RKcfAAfx3varBwCtQiNTw0k3RoHsHC48t1wwAAMql8UPAAAArUIjU8NJN0aB7BwuPLdcMAADo5z6HQAAAA==",
+      "body": {
+        "content": "",
+        "contentType": "text"
+      }
+    },
+  ]
+}

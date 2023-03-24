@@ -4,7 +4,7 @@ using System.CommandLine;
 using System.Text;
 using Todo.CLI.Handlers;
 
-namespace Todo.CLI.Commands
+namespace MSTTool.Archive
 {
     public class AddCommand : Command
     {

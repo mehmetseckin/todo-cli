@@ -12,6 +12,7 @@ using Microsoft.Graph;
 using Todo.CLI.Auth;
 using Todo.Core.Repository;
 using System.Threading.Tasks;
+using MSTTool.Graph;
 
 namespace Todo.CLI
 {
@@ -26,13 +27,19 @@ namespace Todo.CLI
             var todoCliConfig = new TodoCliConfiguration();
             config.Bind("TodoCliConfiguration", todoCliConfig);
 
+            // drp032323 - changed repository to Singleton (from Transient) so can reuse Client fnord
+            // fnord service auth?
             var services = new ServiceCollection()
-                .AddSingleton(typeof(TodoCliConfiguration), todoCliConfig)
-                .AddTransient<ITodoItemRepository>(factory => new TodoItemRepository(TodoCliAuthenticationProviderFactory.GetAuthenticationProvider(factory)));
+                .AddSingleton(todoCliConfig)
+                .AddSingleton(factory => new InteractiveAuthenticator(factory))
+                .AddSingleton(factory => new GraphClient(factory));
+            //fnord
+                //.AddSingleton<factory => new TodoItemRepository(TodoCliAuthenticationProviderFactory.GetAuthenticationProvider2(factory)));
+                //.AddSingleton<ITodoItemRepository>(factory => new TodoItemRepository(TodoCliAuthenticationProviderFactory.GetAuthenticationProvider(factory)));
 
             var serviceProvider = services.BuildServiceProvider();
 
-            return await new TodoCommand(serviceProvider, todoCliConfig)
+            return await new TodoRootCommand(serviceProvider)
                 .InvokeAsync(args);
         }
     }

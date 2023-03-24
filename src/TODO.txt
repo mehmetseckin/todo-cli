@@ -1,5 +1,24 @@
-TODO: 
 drp032223 - updated
+
+WIP 3/23/23
+1) how to cache so doesn't prompt username each time?
+- existing TokenCache code?
+- manually caching authtoken?
+- manually caching/specifying userid?
+
+2) consolidate to just one project?
+- todo model still useful thoug
+
+6) lists command
+
+3) export command
+
+5) Sync command
+
+4) GraphClient class - own
+
+
+OLD:
 
 ARCHITECTURE:
 3) change to REST pattern with direct HTTP calls.
@@ -42,3 +61,7 @@ OR MAYBE DONT NEED
 FEATURES:
 1) Export - write out one giant JSON (or other format?)
 2) Sync - write out one JSON per task to OutputFolder
+
+PACKAGES
+4) drp032323 - package Inquirer: gives warning NU1701: Package 'Inquirer.cs 3.0.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project.
+- however, not an issue since readonly support right now

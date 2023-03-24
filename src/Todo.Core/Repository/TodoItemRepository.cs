@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Graph;
+using Microsoft.Graph.Models;
 using Microsoft.Kiota.Abstractions.Authentication;
 using Todo.Core.Model;
 //fnordwip
@@ -11,6 +12,21 @@ using Todo.Core.Model;
 
 namespace Todo.Core.Repository
 {
+    /*
+    public class TodoItemRepository2 : ITodoItemRepository
+    {
+        public GraphServiceClient GraphClient { get; }
+
+        public TodoItemRepository(Task<AuthenticationResult> authenticationProvider)
+            : base(authenticationProvider)
+        {
+            new Microsoft.Graph.GraphServiceClient()
+            GraphClient = new GraphServiceClient(AuthenticationProvider);
+            new GraphClient
+        }
+    }
+    */
+
     public class TodoItemRepository : RepositoryBase, ITodoItemRepository
     {
         public GraphServiceClient GraphClient { get; }
@@ -18,16 +34,20 @@ namespace Todo.Core.Repository
         public TodoItemRepository(IAuthenticationProvider authenticationProvider)
             : base(authenticationProvider)
         {
+            var client = Microsoft.Graph.GraphClientFactory.Create();
+            
             GraphClient = new GraphServiceClient(AuthenticationProvider);
         }
 
         public async Task AddAsync(TodoItem item)
         {
+            /*fnordwip
             var graphServiceClient = new GraphServiceClient(AuthenticationProvider);
             await graphServiceClient.Me.Outlook.Tasks.Request().AddAsync(new OutlookTask()
             {
                 Subject = item.Subject
             });
+            */
         }
 
         public async Task CompleteAsync(TodoItem item)
@@ -63,9 +83,24 @@ namespace Todo.Core.Repository
 
         public async IAsyncEnumerable<TodoItem> ListAsyncEnumerable(bool listAll)
         {
-            var graphServiceClient = new GraphServiceClient(AuthenticationProvider);
+            //fnordwip
+            //Microsoft.Graph.Planner.Tasks.TasksRequestBuilder.TasksRequestBuilderGetRequestConfiguration config;
+
+            // ASNEEDED: RequestConfiguration, CancellationToken
+            var tasksResponse = await GraphClient.Planner.Tasks.GetAsync(null);
+            var tasks = tasksResponse.Value;
+            foreach (var task in tasks)
+            {
+                yield return new TodoItem()
+                {
+                    Id = task.Id,
+                    Subject = task.Title,
+                    IsCompleted = task.CompletedDateTime.HasValue
+                };
+            }
 
             /*fnordwip
+            var graphServiceClient = new GraphServiceClient(AuthenticationProvider);
 
             var request = graphServiceClient.Me.Outlook.Tasks.Request();
             if(!listAll)

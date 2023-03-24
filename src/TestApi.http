@@ -1,0 +1,14 @@
+### TODO: define token/listid in settings and reference {{token}}
+
+### pull all lists
+GET https://graph.microsoft.com/v1.0/me/todo/lists
+Authorization: Bearer {{token}}
+
+### pull a list
+### TECH: this includes all tasks
+### TODO: does it pull all tasks, or just a page?
+GET https://graph.microsoft.com/v1.0/me/todo/lists/AQMkADAwATEwYmM3LTU4NjktYTUxYS0wMAItMDAKAC4AAAOEN7IbTiy5RKcfAAfx3varAQCtQiNTw0k3RoHsHC48t1wwAAMql8UPAAAA/tasks
+Authorization: Bearer {{token}}
+
+
+

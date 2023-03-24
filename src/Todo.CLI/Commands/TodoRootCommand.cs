@@ -4,13 +4,16 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
 using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Todo.CLI.Commands
 {
-    public class TodoCommand : RootCommand
+    public class TodoRootCommand : RootCommand
     {
-        public TodoCommand(IServiceProvider serviceProvider, TodoCliConfiguration config)
+        public TodoRootCommand(IServiceProvider serviceProvider)
         {
+            var config = serviceProvider.GetService<TodoCliConfiguration>();
+
             // Add static parameters
             Description = "A CLI to manage Microsoft to do items.";
             
@@ -22,11 +25,15 @@ namespace Todo.CLI.Commands
 
             // Add subcommands
             AddCommand(new ListCommand(serviceProvider));
+            AddCommand(new ExportCommand(serviceProvider));
             if (config.SupportsWrite)
             {
+                throw new NotImplementedException();
+                /* USE_WRITECOMMANDS
                 AddCommand(new AddCommand(serviceProvider));
                 AddCommand(new CompleteCommand(serviceProvider));
                 AddCommand(new RemoveCommand(serviceProvider));
+                */
             }
         }
 
