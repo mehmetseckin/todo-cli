@@ -8,6 +8,7 @@ using Todo.Core.Model;
 
 namespace Todo.CLI.Handlers
 {
+    /*fnordwip
     public class ListCommandHandler
     {
         private const char TodoBullet = '-';
@@ -61,4 +62,5 @@ namespace Todo.CLI.Handlers
             Console.ForegroundColor = previousColor;
         }
     }
+    */
 }

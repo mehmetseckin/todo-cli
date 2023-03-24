@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <PackageId>Todo.CLI</PackageId>
     <Authors>mehmetseckin</Authors>
     <Product>Todo CLI</Product>
@@ -31,13 +31,11 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.32" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.1.32" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="3.1.32" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.32" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.51.0" />
+    <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Version="2.27.0" />
     <PackageReference Include="NuGet.Common" Version="6.5.0" />
-    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
-    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>

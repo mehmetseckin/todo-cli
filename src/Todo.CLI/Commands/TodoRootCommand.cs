@@ -5,6 +5,8 @@ using System.CommandLine.Invocation;
 using System.IO;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using MSTTool.Commands;
+using Microsoft.Graph.Models.TermStore;
 
 namespace Todo.CLI.Commands
 {
@@ -18,13 +20,18 @@ namespace Todo.CLI.Commands
             Description = "A CLI to manage Microsoft to do items.";
             
             // Add options
-            AddOption(GetVersionOption());
-            
+            //fnordbug does this work?
+            //AddOption(GetVersionOption());
+
             // Add handlers
-            Handler = TodoCommandHandler.Create();
+            this.SetHandler((context) =>
+            {
+                PrintVersion();
+            });
 
             // Add subcommands
             AddCommand(new ListCommand(serviceProvider));
+            AddCommand(new ListsCommand(serviceProvider));
             AddCommand(new ExportCommand(serviceProvider));
             if (config.SupportsWrite)
             {
@@ -37,12 +44,17 @@ namespace Todo.CLI.Commands
             }
         }
 
+        public void PrintVersion()
+        {
+            var entryAssembly = Assembly.GetEntryAssembly();
+            var entryAssemblyName = entryAssembly.GetName();
+            var description = entryAssembly.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description;
+            Console.WriteLine($"{entryAssemblyName.Name} {entryAssemblyName.Version} - {description}");
+        }
+
         private Option GetVersionOption()
         {
-            return new Option(new string[] { "-v", "--version" }, "Prints out the todo CLI version.")
-            {
-                Argument = new Argument<bool>()
-            };
+            return new Option<string>(new string[] { "-v", "--version" }, "Prints out the CLI version.");
         }
     }
 }

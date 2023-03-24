@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration.CommandLine;
+using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Threading.Tasks;
@@ -6,7 +7,7 @@ using Todo.CLI.Handlers;
 using Todo.Core;
 using Todo.Core.Model;
 
-namespace Todo.CLI.Commands
+namespace MSTTool.Commands
 {
     public class ListCommand : Command
     {
@@ -14,32 +15,16 @@ namespace Todo.CLI.Commands
         {
             Description = "Retrieves a list of the ToDo items.";
 
-            /* fnord - all, vs specific list
-            AddOption(GetAllOption());
-            AddOption(GetNoStatusOption());
-            */
+            var targetListArg = new Argument<string>("listName");
+            AddArgument(targetListArg);
 
-            // fnord - can we get list by displayname using the API, or do we need to get full list and cache?
-            // fnord .NETCore no Option<T>?
-            //new Option
-            //var listOption = new Option<string>("-l", "Get all tasks in the specified list");
-
-            // fnord is there even a "get all"?
-            //Handler = CommandHandler.Create<>
+            this.SetHandler<string>((a) =>
+            {
+                Console.WriteLine("List Argument:{0}", a);
+                throw new NotImplementedException("TODO");
+            },
+            targetListArg);
         }
-
-
-        /*fnordwip
-        private Option GetAllOption()
-        {
-            return new Option(new string[] { "-a", "--all" }, "Lists all to do items including the completed ones.");
-        }
-
-        private Option GetNoStatusOption()
-        {
-            return new Option(new string[] { "--no-status" }, "Suppresses the bullet indicating whether the item is completed or not.");
-        }
-        */
 
         /*fnordwip
         #region ICommandHandler

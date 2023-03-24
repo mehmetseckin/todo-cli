@@ -27,6 +27,7 @@ namespace Todo.CLI
             var todoCliConfig = new TodoCliConfiguration();
             config.Bind("TodoCliConfiguration", todoCliConfig);
 
+
             // drp032323 - changed repository to Singleton (from Transient) so can reuse Client fnord
             // fnord service auth?
             var services = new ServiceCollection()

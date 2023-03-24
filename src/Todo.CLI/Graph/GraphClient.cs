@@ -44,8 +44,9 @@ namespace MSTTool.Graph
 
             // TODO: use helper class/function to ensure is properly formatteds
             var requestUri = Config.BaseUri + relativeUri;
+            Console.WriteLine("Request: {0}:", requestUri);
             var response = await client.GetAsync(requestUri);
-            return response;
+            return await response.Content.ReadAsStringAsync();
         }
 
     }

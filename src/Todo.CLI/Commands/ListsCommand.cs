@@ -14,7 +14,7 @@ namespace MSTTool.Commands
         {
             Description = "Retrieves a list of all ToDo Lists.";
 
-            Handler = CommandHandler.Create(async () =>
+            this.SetHandler(async () =>
             {
                 var client = serviceProvider.GetService<GraphClient>();
                 var response = await client.RequestAsync("lists");
