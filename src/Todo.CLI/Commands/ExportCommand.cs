@@ -61,11 +61,10 @@ namespace MSTTool.Commands
             int tasksCount = 0;
             await foreach (var task in tasksAsync)
             {
-                //fnord more efficient if just use JsonReader. Also avoids losing data.
                 //fnord duplicates
                 var fileName = TodoUtil.NormalizeFileName(task.title) + ".json";
                 var path = Path.Combine(subdir.FullName, fileName);
-                var serialized = JsonSerializer.Serialize(task, options);
+                var serialized = task.OriginalSerialized;
                 await File.WriteAllTextAsync(path, serialized);
                 tasksCount++;
             }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 using Microsoft.Graph;
 
 namespace Todo.Core.Model
@@ -65,6 +66,10 @@ namespace Todo.Core.Model
         public Body body { get; set; }
 
         public List<ChecklistItem> checklistItems { get; set; }
+
+        //fnord
+        [JsonIgnore]
+        public string OriginalSerialized { get; set; }
 
         public override string ToString()
         {

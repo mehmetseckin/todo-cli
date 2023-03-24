@@ -7,12 +7,13 @@ B) Cache mapping from displayName to id
 6.1) update export command
 6.2) implement list command
 
-8) Solution: rename folder
+9) sync command: delete old tasks that no longer exist
 
-9) sync command: delete old
+13) diff command: compare two export folders and report tasks that have been deleted
 
-7) merge collapse to fix Author before pushing
+14) OPTIMIZE: parallel tasks so we can export multiple lists at a time
 
-10) Export using JsonReader
+fnord these 2
 11) Commit Cleanup
+-7) merge collapse to fix Author before pushing
 12) Setup autosync/backup

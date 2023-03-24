@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Todo.Core.Interfaces;
@@ -44,10 +45,18 @@ namespace Todo.Core.Repository
             {
                 var response = await Client.RequestAsync(uri);
 
-                var responseObject = JsonSerializer.Deserialize<ListTasksResponse>(response);
-                foreach (var item in responseObject.value)
-                    yield return item;
-                uri = responseObject.NextLink;
+                // TECH: access each serialized task individually, so we don't lose anything going Deserialize => Serialize
+                // OPTIMIZE: we could change these to be Deserialized on demand
+                var jsonObject = JsonSerializer.Deserialize<JsonObject>(response);
+                var jsonTasksArray = jsonObject["value"].AsArray();
+                foreach (var jsonTask in jsonTasksArray)
+                {
+                    var todoItem = JsonSerializer.Deserialize<TodoItem>(jsonTask);
+                    todoItem.OriginalSerialized = jsonTask.ToJsonString();
+                    yield return todoItem;
+                }
+
+                uri = jsonObject["@odata.nextLink"]?.ToString();
             }
         }
 
