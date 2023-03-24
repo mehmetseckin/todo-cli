@@ -20,10 +20,18 @@ namespace MSTTool.Commands
             {
                 var client = serviceProvider.GetService<GraphClient>();
                 var repo = serviceProvider.GetService<TodoItemRepository>();
-                var response = await client.RequestAsync("lists");
-                repo.AddLists(response);
+                var uri = "lists";
+                do
+                {
+                    var response = await client.RequestAsync(uri);
+                    // this parses the json and populates the repo
+                    uri = repo.AddLists(response);
+                } while (uri != null);
 
-                // fnord json parse
+                foreach (var list in repo.Lists)
+                {
+                    Console.WriteLine(list.displayName);
+                }
             });
         }
 

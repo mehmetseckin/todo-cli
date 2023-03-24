@@ -4,6 +4,7 @@ using Microsoft.Graph;
 using NuGet.Common;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,14 +38,23 @@ namespace MSTTool.Graph
             return client;
         }
 
+        // TODO: to Util class
+        public bool IsAbsoluteUrl(string url)
+        {
+            return Uri.TryCreate(url, UriKind.Absolute, out Uri result);
+        }
+
         // fnord JsonRequest
-        public async Task<string> RequestAsync(string relativeUri)
+        // uri: is absolute or relative
+        public async Task<string> RequestAsync(string uri)
         {
             var client = await HttpClientAsync;
 
             // TODO: use helper class/function to ensure is properly formatteds
-            var requestUri = Config.BaseUri + relativeUri;
-            Console.WriteLine("Request: {0}:", requestUri);
+            string requestUri = IsAbsoluteUrl(uri)
+                ? uri
+                : Config.BaseUri + uri;
+            Debug.WriteLine("Request: {0}:", requestUri);
             var response = await client.GetAsync(requestUri);
             return await response.Content.ReadAsStringAsync();
         }
