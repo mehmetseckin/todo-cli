@@ -10,10 +10,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Todo.CLI;
 using Todo.CLI.Auth;
+using Todo.Core.Interfaces;
 
 namespace MSTTool.Graph
 {
-    public class GraphClient
+    public class GraphClient : IGraphClient
     {
         public TodoCliConfiguration Config { get; }
 
@@ -44,7 +45,6 @@ namespace MSTTool.Graph
             return Uri.TryCreate(url, UriKind.Absolute, out Uri result);
         }
 
-        // fnord JsonRequest
         // uri: is absolute or relative
         public async Task<string> RequestAsync(string uri)
         {

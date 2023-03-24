@@ -13,6 +13,7 @@ using Todo.CLI.Auth;
 using Todo.Core.Repository;
 using System.Threading.Tasks;
 using MSTTool.Graph;
+using Todo.Core.Interfaces;
 
 namespace Todo.CLI
 {
@@ -30,7 +31,7 @@ namespace Todo.CLI
             var services = new ServiceCollection()
                 .AddSingleton(todoCliConfig)
                 .AddSingleton(factory => new InteractiveAuthenticator(factory))
-                .AddSingleton(factory => new GraphClient(factory))
+                .AddSingleton<IGraphClient>(factory => new GraphClient(factory))
                 .AddSingleton(factory => new TodoItemRepository(factory));
 
             var serviceProvider = services.BuildServiceProvider();

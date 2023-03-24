@@ -32,7 +32,7 @@ namespace Todo.CLI.Auth
                 .WithRedirectUri("http://localhost") // Only loopback redirect uri is supported, see https://aka.ms/msal-net-os-browser for details
                 .Build();
 
-            //fnordnotwroking
+            // TECH: use LoginHint or IAccount to access
             TokenCacheHelper.EnableSerialization(app.UserTokenCache);
 
             AuthenticationResultAsync = new AsyncLazy<AuthenticationResult>(() => GetAuthenticationResultAsync(app));
@@ -43,28 +43,13 @@ namespace Todo.CLI.Auth
             });
         }
 
+        // REF: https://learn.microsoft.com/en-us/azure/active-directory/develop/msal-net-acquire-token-silently
         private async Task<AuthenticationResult> GetAuthenticationResultAsync(IPublicClientApplication app)
         {
-            /* fnordv1
-            var loginHint = "loginHint";
-
-            try
-            {
-                return await app.AcquireTokenSilent(Config.Scopes, loginHint).ExecuteAsync();
-            }
-            catch (Exception ex)
-            {
-                return await app.AcquireTokenInteractive(Config.Scopes)
-                    .ExecuteAsync();
-            }
-            */
-
-            // REF: https://learn.microsoft.com/en-us/azure/active-directory/develop/msal-net-acquire-token-silently
-
             // arbitrarily choose the first account actually signed in the token cache
             var accounts = await app.GetAccountsAsync();
 
-            AuthenticationResult result = null;
+            AuthenticationResult result;
             try
             {
                 result = await app.AcquireTokenSilent(Config.Scopes, accounts.FirstOrDefault())

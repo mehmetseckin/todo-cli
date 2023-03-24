@@ -24,8 +24,6 @@ Content:
 }
 */
 
-//fnord - does this only return first 50 lists? see nextLink
-
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -37,6 +35,7 @@ namespace Todo.Core.Model
         public string displayName { get; set; }
 
         public bool isOwner { get; set; }
+
         public bool isShared { get; set; }
         public string wellknownListName {
             get;

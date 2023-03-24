@@ -19,7 +19,6 @@ namespace Todo.CLI.Commands
             // Add static parameters
             Description = "A CLI to manage Microsoft to do items.";
             
-            // Add options
             //fnordbug does this work?
             //AddOption(GetVersionOption());
 

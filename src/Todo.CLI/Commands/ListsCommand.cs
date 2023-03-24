@@ -18,15 +18,8 @@ namespace MSTTool.Commands
 
             this.SetHandler(async () =>
             {
-                var client = serviceProvider.GetService<GraphClient>();
                 var repo = serviceProvider.GetService<TodoItemRepository>();
-                var uri = "lists";
-                do
-                {
-                    var response = await client.RequestAsync(uri);
-                    // this parses the json and populates the repo
-                    uri = repo.AddLists(response);
-                } while (uri != null);
+                await repo.PopulateListsAsync();
 
                 foreach (var list in repo.Lists)
                 {

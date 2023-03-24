@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration.CommandLine;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
@@ -9,6 +9,7 @@ using Todo.Core.Model;
 
 namespace MSTTool.Commands
 {
+    //fnordim - need to map name to id
     public class ListCommand : Command
     {
         public ListCommand(IServiceProvider serviceProvider) : base("list")
@@ -25,69 +26,6 @@ namespace MSTTool.Commands
             },
             targetListArg);
         }
-
-        /*fnordwip
-        #region ICommandHandler
-
-        private const char TodoBullet = '-';
-        private const char CompletedBullet = '\u2713'; // Sqrt - check mark
-
-        public async Task<int> InvokeAsync(InvocationContext context)
-        {
-            context.
-        }
-
-        public static ICommandHandler Create(IServiceProvider serviceProvider)
-        {
-            CommandHandler.Create()
-            return CommandHandler.Create<bool, bool>(async (all, noStatus) =>
-            {
-                var todoItemRetriever = (ITodoItemRepository)serviceProvider.GetService(typeof(ITodoItemRepository));
-                var todoItemsAsync = todoItemRetriever.ListAsyncEnumerable(all);
-
-                await foreach (var item in todoItemsAsync)
-                {
-                    if (!noStatus)
-                    {
-                        RenderBullet(item);
-                        Console.Write(" ");
-                    }
-
-                    Render(item);
-                }
-            });
-        }
-
-        private static void Render(TodoItem item)
-        {
-            Console.Write(item.Subject);
-            Console.Write(Environment.NewLine);
-        }
-
-        private static void RenderBullet(TodoItem item)
-        {
-            ConsoleColor bulletColor;
-            char bullet;
-
-            if (item.IsCompleted)
-            {
-                bulletColor = ConsoleColor.Green;
-                bullet = CompletedBullet;
-            }
-            else
-            {
-                bulletColor = ConsoleColor.Red;
-                bullet = TodoBullet;
-            }
-
-            var previousColor = Console.ForegroundColor;
-            Console.ForegroundColor = bulletColor;
-            Console.Write(bullet);
-            Console.ForegroundColor = previousColor;
-        }
-
-        #endregion
-        */
 
     }
 }

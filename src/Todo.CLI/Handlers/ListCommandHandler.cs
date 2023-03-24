@@ -8,7 +8,7 @@ using Todo.Core.Model;
 
 namespace Todo.CLI.Handlers
 {
-    /*fnordwip
+    /*fnorddelete
     public class ListCommandHandler
     {
         private const char TodoBullet = '-';
