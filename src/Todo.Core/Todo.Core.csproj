@@ -1,12 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Graph.Auth" Version="1.0.0-preview.2" />
-    <PackageReference Include="Microsoft.Graph.Beta" Version="0.8.0-preview" />
+    <PackageReference Include="Microsoft.Graph" Version="5.3.0" />
   </ItemGroup>
 
 </Project>

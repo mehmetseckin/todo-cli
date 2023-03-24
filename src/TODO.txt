@@ -1,0 +1,44 @@
+TODO: 
+drp032223 - updated
+
+ARCHITECTURE:
+3) change to REST pattern with direct HTTP calls.
+- InterativeAuthenticationProvider: change to retrieve access token
+OR MAYBE DONT NEED
+
+            /* ref - change this to instead get accesstoken for us
+             *         public async Task AuthenticateRequestAsync(HttpRequestMessage httpRequestMessage)
+        {
+            AuthenticationProviderOption msalAuthProviderOption = httpRequestMessage.GetMsalAuthProviderOption();
+            msalAuthProviderOption.Scopes = msalAuthProviderOption.Scopes ?? Scopes.ToArray();
+            IAccount account = new GraphAccount(msalAuthProviderOption.UserAccount);
+            AuthenticationResult authenticationResult = await ClientApplication.GetAccessTokenSilentAsync(msalAuthProviderOption);
+            if (authenticationResult == null)
+            {
+                authenticationResult = await GetNewAccessTokenAsync(account, msalAuthProviderOption);
+            }
+
+            if (!string.IsNullOrEmpty(authenticationResult.AccessToken))
+            {
+                httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authenticationResult.AccessToken);
+            }
+        }
+            */
+
+            /*wip
+            var client = new HttpClient();
+
+            // Set the authorization header
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            // Set the request URI
+            var requestUri = "https://graph.microsoft.com/v1.0/me/tasks";
+
+            // Send the request and get the response
+            var response = await graphServiceClient
+            */
+
+
+FEATURES:
+1) Export - write out one giant JSON (or other format?)
+2) Sync - write out one JSON per task to OutputFolder

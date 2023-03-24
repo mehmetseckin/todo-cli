@@ -4,16 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Graph;
+using Microsoft.Kiota.Abstractions.Authentication;
 using Todo.Core.Model;
-using TaskStatus = Microsoft.Graph.TaskStatus;
+//fnordwip
+//using TaskStatus = Microsoft.Graph.TaskStatus;
 
 namespace Todo.Core.Repository
 {
     public class TodoItemRepository : RepositoryBase, ITodoItemRepository
     {
+        public GraphServiceClient GraphClient { get; }
+
         public TodoItemRepository(IAuthenticationProvider authenticationProvider)
             : base(authenticationProvider)
         {
+            GraphClient = new GraphServiceClient(AuthenticationProvider);
         }
 
         public async Task AddAsync(TodoItem item)
@@ -27,18 +32,22 @@ namespace Todo.Core.Repository
 
         public async Task CompleteAsync(TodoItem item)
         {
+            /*fnordwip
             var graphServiceClient = new GraphServiceClient(AuthenticationProvider);
             var requestUrl = graphServiceClient.Me.Outlook.Tasks.AppendSegmentToRequestUrl($"{item.Id}/complete");
             var builder = new OutlookTaskCompleteRequestBuilder(requestUrl, graphServiceClient);
             await builder.Request().PostAsync();
+            */
         }
 
         public async Task DeleteAsync(TodoItem item)
         {
+            /*fnordwip
             var graphServiceClient = new GraphServiceClient(AuthenticationProvider);
             var requestUrl = graphServiceClient.Me.Outlook.Tasks.AppendSegmentToRequestUrl($"{item.Id}");
             var builder = new OutlookTaskRequestBuilder(requestUrl, graphServiceClient);
             await builder.Request().DeleteAsync();
+            */
         }
 
         public async Task<IEnumerable<TodoItem>> ListAsync(bool listAll)
@@ -56,7 +65,7 @@ namespace Todo.Core.Repository
         {
             var graphServiceClient = new GraphServiceClient(AuthenticationProvider);
 
-
+            /*fnordwip
 
             var request = graphServiceClient.Me.Outlook.Tasks.Request();
             if(!listAll)
@@ -78,6 +87,7 @@ namespace Todo.Core.Repository
                 }
                 request = tasksPage.NextPageRequest;
             }
+            */
         }
     }
 }

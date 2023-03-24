@@ -1,4 +1,5 @@
 ﻿using Microsoft.Graph;
+using Microsoft.Kiota.Abstractions.Authentication;
 using System;
 using System.Collections.Generic;
 using System.Text;
