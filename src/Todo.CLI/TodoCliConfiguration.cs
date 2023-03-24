@@ -13,7 +13,8 @@ namespace Todo.CLI
 
         public bool SupportsWrite { get; set; }
 
-        [DefaultValue("https://graph.microsoft.com/v1.0/me/tasks")]
+        // TODO: drp032323 - ConfigurationBuilder doesn't support this. Json.Net has DefaultValueHandling.
+        //[DefaultValue("https://graph.microsoft.com/v1.0/me/tasks")]
         public string BaseUri { get; set; }
     }
 }
