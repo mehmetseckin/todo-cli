@@ -17,6 +17,8 @@ WIP 3/23/23
 
 4) GraphClient class - own
 
+7) merge collapse to fix Author before pushing
+
 
 OLD:
 

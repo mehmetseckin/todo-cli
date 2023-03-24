@@ -1,7 +1,7 @@
 HIST:
 drp032323 - updated
 
-JSONS /lists response
+JSON /lists response
 Content:
 {
   "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('EMAILUSERNAME%40hotmail.com')/todo/lists",
