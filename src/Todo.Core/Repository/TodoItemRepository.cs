@@ -51,7 +51,6 @@ namespace Todo.Core.Repository
             }
         }
 
-
         public async Task PopulateListsAsync()
         {
             // only run once

@@ -62,6 +62,8 @@ namespace Todo.Core.Model
         public bool hasAttachments { get; set; }
         public string id { get; set; }
 
+        public Body body { get; set; }
+
         public List<ChecklistItem> checklistItems { get; set; }
 
         public override string ToString()

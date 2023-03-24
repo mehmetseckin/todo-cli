@@ -1,5 +1,4 @@
-﻿using Todo.CLI.Handlers;
-using System;
+﻿using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
@@ -17,12 +16,12 @@ namespace Todo.CLI.Commands
             var config = serviceProvider.GetService<TodoCliConfiguration>();
 
             // Add static parameters
-            Description = "A CLI to manage Microsoft to do items.";
+            Description = "A CLI to work with Microsoft ToDo items.";
             
-            //fnordbug does this work?
+            // TEST: drp032223 - seems "--version" is built in.
             //AddOption(GetVersionOption());
 
-            // Add handlers
+            // this is the handler that runs if no other command is specified
             this.SetHandler((context) =>
             {
                 PrintVersion();
@@ -49,6 +48,7 @@ namespace Todo.CLI.Commands
             var entryAssemblyName = entryAssembly.GetName();
             var description = entryAssembly.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description;
             Console.WriteLine($"{entryAssemblyName.Name} {entryAssemblyName.Version} - {description}");
+            Console.WriteLine("\tUse -h to see commands");
         }
 
         private Option GetVersionOption()

@@ -7,7 +7,6 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Todo.CLI.Handlers;
 using Todo.Core.Model;
 using Todo.Core.Repository;
 using Todo.Core.Util;
@@ -24,7 +23,7 @@ namespace MSTTool.Commands
 
             Description = "Exports ToDo items to JSON files";
 
-            /* TODO_EXPORTLIST - specific list optional argument
+            /* TODO_LISTARGUMENT - specific list optional argument
             */
 
             this.SetHandler(() => ExportAllAsync());
@@ -32,11 +31,13 @@ namespace MSTTool.Commands
 
         public async Task ExportAllAsync()
         {
-            // TODO_EXPORTLIST: only do this if we need to lookup a list id, or need to export all lists
+            // TODO_LISTARGUMENT: only do this if we need to lookup a list id, or need to export all lists
             await Repo.PopulateListsAsync();
 
             // TODO: root folder to Config
             var dir = Directory.CreateDirectory("export");
+
+            //fnord export all vs not completed only
 
             foreach (var list in Repo.Lists)
             {
@@ -47,18 +48,29 @@ namespace MSTTool.Commands
 
         public async Task ExportListAsync(TodoList list, DirectoryInfo dir)
         {
+            Console.WriteLine("Export List: {0}", list.displayName);
+
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+            };
+
             var listFolderName = TodoUtil.NormalizeFileName(list.displayName);
             var subdir = dir.CreateSubdirectory(listFolderName);
             var tasksAsync = Repo.GetListTasksAsyncEnumerable(list);
+            int tasksCount = 0;
             await foreach (var task in tasksAsync)
             {
-                //fnord more efficient if just use JsonReader
+                //fnord more efficient if just use JsonReader. Also avoids losing data.
                 //fnord duplicates
                 var fileName = TodoUtil.NormalizeFileName(task.title) + ".json";
                 var path = Path.Combine(subdir.FullName, fileName);
-                var serialized = JsonSerializer.Serialize(task);
+                var serialized = JsonSerializer.Serialize(task, options);
                 await File.WriteAllTextAsync(path, serialized);
+                tasksCount++;
             }
+
+            Console.WriteLine("Exported List: {0} [{1} tasks]", list.displayName, tasksCount);
         }
     }
 }
