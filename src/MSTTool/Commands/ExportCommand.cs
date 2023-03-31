@@ -40,11 +40,6 @@ namespace Todo.MSTTool.Commands
         {
             Console.WriteLine("Export List: {0}", list.displayName);
 
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = true,
-            };
-
             var listFolderName = TodoUtil.NormalizeFileName(list.displayName);
             var subdir = ExportRoot.CreateSubdirectory(listFolderName);
             var tasksAsync = Repo.GetListTasksAsyncEnumerable(list);

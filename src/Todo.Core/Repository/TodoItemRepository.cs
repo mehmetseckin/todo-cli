@@ -40,6 +40,11 @@ namespace Todo.Core.Repository
         {
             var id = list.id;
 
+            var serializerOptions = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+            };
+
             var uri = $"lists/{id}/tasks";
             while (uri != null)
             {
@@ -52,7 +57,7 @@ namespace Todo.Core.Repository
                 foreach (var jsonTask in jsonTasksArray)
                 {
                     var todoItem = JsonSerializer.Deserialize<TodoItem>(jsonTask);
-                    todoItem.OriginalSerialized = jsonTask.ToJsonString();
+                    todoItem.OriginalSerialized = jsonTask.ToJsonString(serializerOptions);
                     yield return todoItem;
                 }
 
