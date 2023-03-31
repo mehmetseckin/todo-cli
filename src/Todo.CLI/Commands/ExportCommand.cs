@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Graph.Models;
 using NuGet.Common;
 using System;
 using System.Collections.Generic;
@@ -17,34 +18,23 @@ namespace MSTTool.Commands
 {
     public class ExportCommand : TargetListCommandBase
     {
+        public DirectoryInfo ExportRoot { get; private set; }
+
         public ExportCommand(IServiceProvider serviceProvider) : base("export", serviceProvider)
         {
             Description = "Exports ToDo items to JSON files. Optionally takes target list name.";
         }
 
         // listName: null means all
-        public override async Task RunCommandAsync(string listName)
+        public override Task RunCommandAsync(string listName)
         {
             // TODO: root folder to Config
-            var dir = Directory.CreateDirectory("export");
+            ExportRoot = Directory.CreateDirectory("export");
 
-            if (listName != null)
-            {
-                var list = await Repo.GetListAsync(listName);
-                await ExportListAsync(list, dir);
-            }
-            else // export all
-            {
-                var lists = await Repo.PopulateListsAsync();
-
-                // TODO_EXCLUDECOMPLETED
-                // OPTIMIZE: drp033023 - parallelize
-                foreach (var list in Repo.Lists)
-                    await ExportListAsync(list, dir);
-            }
+            return base.RunCommandAsync(listName);
         }
 
-        public async Task ExportListAsync(TodoList list, DirectoryInfo dir)
+        public override async Task RunCommandAsync(TodoList list)
         {
             Console.WriteLine("Export List: {0}", list.displayName);
 
@@ -54,7 +44,7 @@ namespace MSTTool.Commands
             };
 
             var listFolderName = TodoUtil.NormalizeFileName(list.displayName);
-            var subdir = dir.CreateSubdirectory(listFolderName);
+            var subdir = ExportRoot.CreateSubdirectory(listFolderName);
             var tasksAsync = Repo.GetListTasksAsyncEnumerable(list);
             int tasksCount = 0;
             await foreach (var task in tasksAsync)
