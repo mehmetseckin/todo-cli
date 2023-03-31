@@ -14,9 +14,12 @@ using Todo.Core.Model;
 using Todo.Core.Repository;
 using Todo.Core.Util;
 
-namespace MSTTool.Commands
+namespace Todo.MSTTool.Commands
 {
-    public class ExportCommand : TargetListCommandBase
+    /// <summary>
+    /// Example usage "todo export" or "todo export LIST" or "todo export LIST -folder FOLDER"
+    /// </summary>
+    public class ExportCommand : TargetListFolderCommandBase
     {
         public DirectoryInfo ExportRoot { get; private set; }
 
@@ -26,12 +29,11 @@ namespace MSTTool.Commands
         }
 
         // listName: null means all
-        public override Task RunCommandAsync(string listName)
+        public override Task RunFolderCommandAsync(string listName, string folder)
         {
-            // TODO: root folder to Config
-            ExportRoot = Directory.CreateDirectory("export");
+            ExportRoot = Directory.CreateDirectory(folder);
 
-            return base.RunCommandAsync(listName);
+            return base.RunFolderCommandAsync(listName, folder);
         }
 
         public override async Task RunCommandAsync(TodoList list)

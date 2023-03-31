@@ -1,6 +1,6 @@
 TODO 3/30/23:
 
-6.3) TODO_LISTARGUMENT: Lists: cache mapping from displayName to Id
+6.3) Lists: cache mapping from displayName to Id so don't have to retrieve each time [TODO_LISTARGUMENT]
 
 9) sync command: delete old tasks that no longer exist
 
@@ -15,5 +15,7 @@ TODO 3/30/23:
 
 16) TODO_EXCLUDECOMPLETED: All Commands - Option: exclude completed
 
-17) Target Folder: global option that can change Configuration
-
+18) Export File Names: use task.title
+- CURRENT: using task.id in filename
+- REQ: use task.title
+- ISSUE: there may be multiple tasks with the same title, and we need a deterministic way to disambiguate.

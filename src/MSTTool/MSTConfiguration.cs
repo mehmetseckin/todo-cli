@@ -13,7 +13,7 @@ namespace Todo.MSTTool
 
         public bool SupportsWrite { get; set; }
 
-        // TODO: drp032323 - ConfigurationBuilder doesn't support this. Json.Net has DefaultValueHandling.
+        // TODO: drp032323 - ConfigurationBuilder doesn't support DefaultValue. Could switch to Json.Net which has DefaultValueHandling.
         //[DefaultValue("https://graph.microsoft.com/v1.0/me/tasks")]
         public string BaseUri { get; set; }
 

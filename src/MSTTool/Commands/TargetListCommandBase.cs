@@ -11,8 +11,9 @@ using System.Threading.Tasks;
 using Todo.MSTTool;
 using Todo.Core.Model;
 using Todo.Core.Repository;
+using System.Linq;
 
-namespace MSTTool.Commands
+namespace Todo.MSTTool.Commands
 {
     public abstract class TargetListCommandBase : Command
     {
@@ -35,13 +36,17 @@ namespace MSTTool.Commands
 
             Config = serviceProvider.GetService<MSTConfiguration>();
 
+            // TODO: drp033123 - cleaner to AddGlobalArgument() to RootCommand?
             this.AddArgument(ListArgument);
 
-            this.SetHandler<string>(listName => RunCommandAsync(listName), ListArgument);
+            this.SetHandler<string>((listName) => RunCommandAsync(listName),
+                ListArgument);
         }
 
         public virtual async Task RunCommandAsync(string listName)
         {
+            Console.WriteLine("RunCommand:{0} TargetList:{1}", Name, listName);
+
             if (listName != null)
             {
                 var list = await Repo.GetListAsync(listName);

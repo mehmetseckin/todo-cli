@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.CommandLine;
 using System.Threading.Tasks;
 using Todo.Core.Interfaces;
@@ -17,6 +18,9 @@ namespace Todo.MSTTool
         {
             var config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                // TODO_CONFIG_COMMANDLINE: drp033123 - support changing config via args. E.g. "--TargetFolder='foo'". However, AddCommandLine() only allows the args to define
+                //  new properties in the config option, and not override the MSTConfiguration.
+                //.AddCommandLine(args)
                 .Build();
 
             var mstConfig = new MSTConfiguration();

@@ -17,6 +17,7 @@ namespace MSTTool.Commands
             Description = "Retrieves a list of the ToDo items.";
         }
 
+        // TODO: drp033123 - we don't need targetFolder,
         public override async Task RunCommandAsync(TodoList list)
         {
             var tasksAsync = Repo.GetListTasksAsyncEnumerable(list);
