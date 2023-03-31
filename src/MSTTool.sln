@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MSTTool", "Todo.CLI\MSTTool.csproj", "{DAE1B155-3197-4C6A-A447-E042DE7185F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MSTTool", "MSTTool\MSTTool.csproj", "{DAE1B155-3197-4C6A-A447-E042DE7185F3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Todo.Core", "Todo.Core\Todo.Core.csproj", "{B0359C3C-B44F-4F18-9A7F-D879B7C368E4}"
 EndProject

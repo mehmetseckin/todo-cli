@@ -2,20 +2,22 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
-    <PackageId>Todo.CLI</PackageId>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <PackageId>MSTTool</PackageId>
     <Authors>mehmetseckin</Authors>
-    <Product>Todo CLI</Product>
+    <Product>MST Tool</Product>
     <Description>A CLI to manage Microsoft To Do tasks</Description>
     <RepositoryUrl>https://github.com/mehmetseckin/todo-cli/</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
-    <PackageTags>microsoft-todo todo CLI</PackageTags>
+    <PackageTags>microsoft-todo todo CLI export</PackageTags>
     <AssemblyVersion>0.1.3</AssemblyVersion>
     <FileVersion>0.1.3</FileVersion>
-    <Version>0.1.3</Version>
-    <AssemblyName>todo</AssemblyName>
+    <Version>0.2.0</Version>
+    <AssemblyName>Todo</AssemblyName>
     <NoWin32Manifest>true</NoWin32Manifest>
-    <StartupObject>Todo.CLI.Program</StartupObject>
+    <StartupObject></StartupObject>
+    <LangVersion>9.0</LangVersion>
+    <RootNamespace>Todo.MSTTool</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
@@ -25,17 +27,20 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <None Remove=".MSTTool.csproj.un~" />
     <None Remove="m0om4hc0.xba~" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.32" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.1.32" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="3.1.32" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.32" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.51.0" />
-    <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Version="2.27.0" />
     <PackageReference Include="NuGet.Common" Version="6.5.0" />
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
