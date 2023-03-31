@@ -8,6 +8,7 @@ using System.CommandLine;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Todo.MSTTool;
 using Todo.Core.Model;
 using Todo.Core.Repository;
 
@@ -24,11 +25,15 @@ namespace MSTTool.Commands
         // common argument for most commands.
         public static Argument<string> ListArgument { get; } 
 
-        public TodoItemRepository Repo { get; }
+        public TodoItemRepository Repo { get; set; }
+
+        public MSTConfiguration Config { get; set; }
 
         public TargetListCommandBase(string commandName, IServiceProvider serviceProvider) : base(commandName)
         {
             Repo = serviceProvider.GetService<TodoItemRepository>();
+
+            Config = serviceProvider.GetService<MSTConfiguration>();
 
             this.AddArgument(ListArgument);
 

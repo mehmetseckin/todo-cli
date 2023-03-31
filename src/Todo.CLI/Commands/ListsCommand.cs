@@ -1,14 +1,14 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Graph.Security.Cases.EdiscoveryCases.Item.SecurityReopen;
-using MSTTool.Graph;
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Text;
 using Todo.Core.Repository;
+using Todo.MSTTool.Graph;
 
-namespace MSTTool.Commands
+namespace Todo.MSTTool.Commands
 {
     public class ListsCommand : Command
     {

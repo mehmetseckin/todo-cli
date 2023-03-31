@@ -75,7 +75,7 @@ namespace Todo.Core.Repository
         {
             // only run once
             // ASNEEDED: support refreshing
-            // TODO_LISTARGUMENT: support awaiting an pending PopulateLists task. Use IObservable cold stream?
+            // TODO_LISTARGUMENT: support awaiting a pending PopulateLists task. Use IObservable cold stream?
             if (Lists != null)
                 return Lists;
 

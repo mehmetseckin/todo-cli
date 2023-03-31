@@ -12,12 +12,12 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Todo.CLI.Auth
+namespace Todo.MSTTool.Auth
 {
     // TODO: interface
     public class InteractiveAuthenticator
     {
-        public TodoCliConfiguration Config { get; }
+        public MSTConfiguration Config { get; }
 
         public AsyncLazy<AuthenticationResult> AuthenticationResultAsync { get; }
 
@@ -25,7 +25,7 @@ namespace Todo.CLI.Auth
 
         public InteractiveAuthenticator(IServiceProvider serviceProvider)
         {
-            Config = serviceProvider.GetService<TodoCliConfiguration>();
+            Config = serviceProvider.GetService<MSTConfiguration>();
 
             IPublicClientApplication app = PublicClientApplicationBuilder
                 .Create(Config.ClientId)

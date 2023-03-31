@@ -7,13 +7,13 @@ using Microsoft.Extensions.DependencyInjection;
 using MSTTool.Commands;
 using Microsoft.Graph.Models.TermStore;
 
-namespace Todo.CLI.Commands
+namespace Todo.MSTTool.Commands
 {
     public class TodoRootCommand : RootCommand
     {
         public TodoRootCommand(IServiceProvider serviceProvider)
         {
-            var config = serviceProvider.GetService<TodoCliConfiguration>();
+            var config = serviceProvider.GetService<MSTConfiguration>();
 
             // Add static parameters
             Description = "A CLI to work with Microsoft ToDo items.";

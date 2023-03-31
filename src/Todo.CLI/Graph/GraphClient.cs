@@ -8,15 +8,15 @@ using System.Diagnostics;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Todo.CLI;
-using Todo.CLI.Auth;
+using Todo.MSTTool;
+using Todo.MSTTool.Auth;
 using Todo.Core.Interfaces;
 
-namespace MSTTool.Graph
+namespace Todo.MSTTool.Graph
 {
     public class GraphClient : IGraphClient
     {
-        public TodoCliConfiguration Config { get; }
+        public MSTConfiguration Config { get; }
 
         public IServiceProvider ServiceProvider { get; }
 
@@ -25,7 +25,7 @@ namespace MSTTool.Graph
         public GraphClient(IServiceProvider serviceProvider)
         {
             ServiceProvider = serviceProvider;
-            Config = ServiceProvider.GetService<TodoCliConfiguration>();
+            Config = ServiceProvider.GetService<MSTConfiguration>();
 
             HttpClientAsync = new AsyncLazy<HttpClient>(CreateHttpClientAsync);
         }

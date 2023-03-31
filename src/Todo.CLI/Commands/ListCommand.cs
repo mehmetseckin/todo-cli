@@ -4,7 +4,7 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
 using System.Threading.Tasks;
-using Todo.CLI.Commands;
+using Todo.MSTTool.Commands;
 using Todo.Core.Model;
 using Todo.Core.Util;
 
@@ -25,7 +25,7 @@ namespace MSTTool.Commands
             await foreach (var task in tasksAsync)
             {
                 // TODO: drp033123 - include checkmark - see original project
-                Console.WriteLine("{1}/{1}", list.displayName, task.title);
+                Console.WriteLine("[{2}] {0}/{1}", list.displayName, task.title, task.status);
                 tasksCount++;
             }
 

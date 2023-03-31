@@ -1,11 +1,6 @@
 TODO 3/30/23:
 
-6) TODO_LISTARGUMENT: target a specific list (for sync/export/diff/etc)
-A) PopulateLists each time, and map displayName => id
-B) Cache mapping from displayName to id
-6.1) update export command
-6.2) implement list command
-6.3) Lists: cache mapping from displayName to Id
+6.3) TODO_LISTARGUMENT: Lists: cache mapping from displayName to Id
 
 9) sync command: delete old tasks that no longer exist
 
@@ -20,5 +15,5 @@ B) Cache mapping from displayName to id
 
 16) TODO_EXCLUDECOMPLETED: All Commands - Option: exclude completed
 
-
+17) Target Folder: global option that can change Configuration
 

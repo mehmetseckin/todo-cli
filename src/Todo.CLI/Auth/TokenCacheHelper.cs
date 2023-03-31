@@ -5,7 +5,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Todo.CLI.Auth
+namespace Todo.MSTTool.Auth
 {
     static class TokenCacheHelper
     {

@@ -1,21 +1,15 @@
 ﻿
-using Todo.CLI.Commands;
-using System;
-using System.CommandLine;
-using System.CommandLine.Invocation;
-using System.IO;
-using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Todo.Core;
-using Microsoft.Graph;
-using Todo.CLI.Auth;
-using Todo.Core.Repository;
+using System.CommandLine;
 using System.Threading.Tasks;
-using MSTTool.Graph;
 using Todo.Core.Interfaces;
+using Todo.Core.Repository;
+using Todo.MSTTool.Auth;
+using Todo.MSTTool.Commands;
+using Todo.MSTTool.Graph;
 
-namespace Todo.CLI
+namespace Todo.MSTTool
 {
     class Program
     {
@@ -25,11 +19,11 @@ namespace Todo.CLI
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .Build();
 
-            var todoCliConfig = new TodoCliConfiguration();
-            config.Bind("TodoCliConfiguration", todoCliConfig);
+            var mstConfig = new MSTConfiguration();
+            config.Bind(nameof(MSTConfiguration), mstConfig);
 
             var services = new ServiceCollection()
-                .AddSingleton(todoCliConfig)
+                .AddSingleton(mstConfig)
                 .AddSingleton(factory => new InteractiveAuthenticator(factory))
                 .AddSingleton<IGraphClient>(factory => new GraphClient(factory))
                 .AddSingleton(factory => new TodoItemRepository(factory));

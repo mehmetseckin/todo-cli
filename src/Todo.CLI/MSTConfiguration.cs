@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 
-namespace Todo.CLI
+namespace Todo.MSTTool
 {
-    public class TodoCliConfiguration
+    public class MSTConfiguration
     {
         public string ClientId { get; set; }
 
@@ -16,5 +16,7 @@ namespace Todo.CLI
         // TODO: drp032323 - ConfigurationBuilder doesn't support this. Json.Net has DefaultValueHandling.
         //[DefaultValue("https://graph.microsoft.com/v1.0/me/tasks")]
         public string BaseUri { get; set; }
+
+        public string TargetFolder { get; set; }
     }
 }
