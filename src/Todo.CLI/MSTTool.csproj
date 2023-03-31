@@ -16,6 +16,7 @@
     <AssemblyName>todo</AssemblyName>
     <NoWin32Manifest>true</NoWin32Manifest>
     <StartupObject>Todo.CLI.Program</StartupObject>
+    <LangVersion>9.0</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">

@@ -60,12 +60,24 @@ namespace Todo.Core.Repository
             }
         }
 
-        public async Task PopulateListsAsync()
+        // TODO_LISTARGUMENT: add Dictionary
+        public async Task<TodoList> GetListAsync(string name)
+        {
+            var lists = await PopulateListsAsync();
+            // TODO_ERRORHANDLING: right now InvokeAsync will report as Unhandled Exception. Need prettier display
+            var list = lists.FirstOrDefault(l => l.displayName == name);
+            if (list == null)
+                throw new KeyNotFoundException("Unrecognized List: " + name);
+            return list;
+        }
+
+        public async Task<IEnumerable<TodoList>> PopulateListsAsync()
         {
             // only run once
             // ASNEEDED: support refreshing
+            // TODO_LISTARGUMENT: support awaiting an pending PopulateLists task. Use IObservable cold stream?
             if (Lists != null)
-                return;
+                return Lists;
 
             Lists ??= new();
             var uri = "lists";
@@ -75,6 +87,8 @@ namespace Todo.Core.Repository
                 // this parses the json and populates the repo
                 uri = AddListsFromSerialized(response);
             }
+
+            return Lists;
         }
 
         private class ListsResponse

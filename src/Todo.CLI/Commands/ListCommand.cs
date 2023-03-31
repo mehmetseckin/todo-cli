@@ -3,24 +3,20 @@ using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Threading.Tasks;
+using Todo.CLI.Commands;
 
 namespace MSTTool.Commands
 {
-    public class ListCommand : Command
+    public class ListCommand : TargetListCommandBase
     {
-        public ListCommand(IServiceProvider serviceProvider) : base("list")
+        public ListCommand(IServiceProvider serviceProvider) : base("list", serviceProvider)
         {
             Description = "Retrieves a list of the ToDo items.";
+        }
 
-            var targetListArg = new Argument<string>("listName");
-            AddArgument(targetListArg);
-
-            this.SetHandler<string>((a) =>
-            {
-                Console.WriteLine("List Argument:{0}", a);
-                throw new NotImplementedException("TODO_LISTARGUMENT");
-            },
-            targetListArg);
+        public override async Task RunCommandAsync(string listName)
+        {
+            throw new NotImplementedException();
         }
 
     }

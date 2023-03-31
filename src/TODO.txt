@@ -1,11 +1,11 @@
-drp032223 - updated
+TODO 3/30/23:
 
-WIP 3/23/23
-6) TODO_LISTARGUMENT: target a specific list. 
+6) TODO_LISTARGUMENT: target a specific list (for sync/export/diff/etc)
 A) PopulateLists each time, and map displayName => id
 B) Cache mapping from displayName to id
 6.1) update export command
 6.2) implement list command
+6.3) Lists: cache mapping from displayName to Id
 
 9) sync command: delete old tasks that no longer exist
 
@@ -13,7 +13,12 @@ B) Cache mapping from displayName to id
 
 14) OPTIMIZE: parallel tasks so we can export multiple lists at a time
 
-fnord these 2
-11) Commit Cleanup
--7) merge collapse to fix Author before pushing
-12) Setup autosync/backup
+15) purge command: cleanup old "complete" tasks according to some safe criteria. 
+- E.g. repeating tasks, oldest except last "X"
+- by default preview mode
+- option to commit
+
+16) TODO_EXCLUDECOMPLETED: All Commands - Option: exclude completed
+
+
+

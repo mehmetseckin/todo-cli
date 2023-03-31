@@ -67,7 +67,6 @@ namespace Todo.Core.Model
 
         public List<ChecklistItem> checklistItems { get; set; }
 
-        //fnord
         [JsonIgnore]
         public string OriginalSerialized { get; set; }
 

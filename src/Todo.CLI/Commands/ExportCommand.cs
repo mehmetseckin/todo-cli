@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using NuGet.Common;
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
+using System.CommandLine.Binding;
 using System.IO;
 using System.Reflection.Metadata;
 using System.Text;
@@ -13,36 +15,32 @@ using Todo.Core.Util;
 
 namespace MSTTool.Commands
 {
-    public class ExportCommand : Command
+    public class ExportCommand : TargetListCommandBase
     {
-        public TodoItemRepository Repo { get; }
-
-        public ExportCommand(IServiceProvider serviceProvider) : base("export")
+        public ExportCommand(IServiceProvider serviceProvider) : base("export", serviceProvider)
         {
-            Repo = serviceProvider.GetService<TodoItemRepository>();
-
-            Description = "Exports ToDo items to JSON files";
-
-            /* TODO_LISTARGUMENT - specific list optional argument
-            */
-
-            this.SetHandler(() => ExportAllAsync());
+            Description = "Exports ToDo items to JSON files. Optionally takes target list name.";
         }
 
-        public async Task ExportAllAsync()
+        // listName: null means all
+        public override async Task RunCommandAsync(string listName)
         {
-            // TODO_LISTARGUMENT: only do this if we need to lookup a list id, or need to export all lists
-            await Repo.PopulateListsAsync();
-
             // TODO: root folder to Config
             var dir = Directory.CreateDirectory("export");
 
-            //fnord export all vs not completed only
-
-            foreach (var list in Repo.Lists)
+            if (listName != null)
             {
+                var list = await Repo.GetListAsync(listName);
                 await ExportListAsync(list, dir);
+            }
+            else // export all
+            {
+                var lists = await Repo.PopulateListsAsync();
 
+                // TODO_EXCLUDECOMPLETED
+                // OPTIMIZE: drp033023 - parallelize
+                foreach (var list in Repo.Lists)
+                    await ExportListAsync(list, dir);
             }
         }
 
@@ -61,8 +59,9 @@ namespace MSTTool.Commands
             int tasksCount = 0;
             await foreach (var task in tasksAsync)
             {
-                //fnord duplicates
-                var fileName = TodoUtil.NormalizeFileName(task.title) + ".json";
+                // TECH: write out filename with full id, in case task is renamed or there are duplicate display Names
+                //var fileName = TodoUtil.NormalizeFileName(task.title) + ".json";
+                var fileName = TodoUtil.NormalizeFileName(task.id) + ".json";
                 var path = Path.Combine(subdir.FullName, fileName);
                 var serialized = task.OriginalSerialized;
                 await File.WriteAllTextAsync(path, serialized);
