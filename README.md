@@ -6,49 +6,63 @@
     />
 </p>
 
-# Todo CLI
+# MSToDo Tool
 
-A cross-platform command-line interface to interact with Microsoft To Do, built using .NET Core 3.
+MSTTool is a command-line interface to access the Microsoft To Do REST API, using C# and .NET Core 3. Includes an "export" function for exporting all your tasks to JSON files organized in a folder hierarchy to enable automated backups.
 
-## Build Status
+## Background
 
-| Platform | Status |
-| ------ | ------------ |
-| CI | [![CI build status](https://dev.azure.com/mtseckin/todo-cli/_apis/build/status/CI)](https://dev.azure.com/mtseckin/todo-cli/_build/latest?definitionId=1) |
-| Windows 10 (x64) | [![Windows 10 (x64) build status](https://dev.azure.com/mtseckin/todo-cli/_apis/build/status/CD?stageName=win10_x64)](https://dev.azure.com/mtseckin/todo-cli/_build/latest?definitionId=5) |
-| Linux (x64) | [![Linux (x64) build status](https://dev.azure.com/mtseckin/todo-cli/_apis/build/status/CD?stageName=linux_x64)](https://dev.azure.com/mtseckin/todo-cli/_build/latest?definitionId=5) |
-| macOS X (x64) | [![macO X (x64) build status](https://dev.azure.com/mtseckin/todo-cli/_apis/build/status/CD?stageName=osx_x64)](https://dev.azure.com/mtseckin/todo-cli/_build/latest?definitionId=5) |
+The impetus for creating this tool are limitations with Microsoft To Do, which is an excellent cloud-based task management tool that supports easy management of repeating tasks, due dates, and daily lists. It evolved out of Wunderlist and has come a long way since then. Some of the limitations this tool seeks to address:
+* Backup: There is no easy way to backup or export your Tasks. Outlook can interface with your Tasks, and can Export, but only through cumbersome manual steps to a broken CSV format or to an unfriendly PST format.
+* Accidental Delete: It is easy to accidentally delete a task, with limited Undo functionality and no history. This can be frustrating if you accidentally swiped left on a task and missed the Undo prompt. (Though I believe Outlook allows you to see and recover Deleted tasks.)
+* Accidental Complete: Similarly, it is easy to accidentally "complete" a task. While you can easily "uncomplete" a task, depending on the context you were in, you may not know which task it is.
+
+This particular project is forked from [todo-cli](https://github.com/mehmetseckin/todo-cli). This project is a refactor that kept some of the top-level structure.
+
+## Objectives
+
+The objectives of MSTTool includes:
+* Enable automated backups of your Tasks
+* Enable "diffing" two snapshots of Tasks *[Not Implemented]*
+* Enable more flexible search functions (by virtue of it all being stored as text)
 
 ## Getting Started
-
-### Install
-
-If you just want to give it a spin, head over to [releases](https://github.com/mehmetseckin/todo-cli/releases/). Download a release and extract to somewhere in your `PATH`, and run `todo --help` to get started.
 
 ### Build
 
 ```
 # Clone the repository
-git clone https://github.com/mehmetseckin/todo-cli.git
+git clone https://github.com/pappde/MsToDoTool.git
 
 # Navigate into the source code folder
-cd .\todo-cli\src
+cd .\MSTTool\src
 
 # Build the project
 dotnet build
 ```
+
+Alternately, you can use Visual Studio and open the MSTTool.sln.
 
 ### Run
 
 The application will automatically prompt you to sign in with your Microsoft account, and ask for your consent to access your data when needed.
 
 ```
-# Run using dotnet run
-dotnet run -p .\Todo.CLI -- --help
+# Run from build output
+cd .\MSTTool\bin\Debug\netcoreapp3.1\
+todo --help
 
-# Run from build output (?)
-.\Todo.CLI\bin\Debug\netcoreapp3.0\todo --help
+# Export
+todo export
+todo export -folder=ToFolder
+todo export OnlyList -folder=ToFolder
 ```
+
+### Configuration
+
+* appsettings.json: different parameters can be configured here, such as the default TargetFolder
+* Target List: Most commands allow taking a list name as a parameter. If no list name is specified, then it will act on all lists.
+* Target Folder: Some commands allow changing the TargetFolder specified in the configuration. "-folder=ToFolder"
 
 ## Contributing
 
