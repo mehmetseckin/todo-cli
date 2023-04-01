@@ -19,3 +19,8 @@ TODO 3/30/23:
 - CURRENT: using task.id in filename
 - REQ: use task.title
 - ISSUE: there may be multiple tasks with the same title, and we need a deterministic way to disambiguate.
+
+REGRESS:
+19) Cross-Platform: test if still works on other platforms
+
+

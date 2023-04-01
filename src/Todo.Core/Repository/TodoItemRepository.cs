@@ -65,14 +65,19 @@ namespace Todo.Core.Repository
             }
         }
 
-        // TODO_LISTARGUMENT: add Dictionary
+        /// <summary>
+        /// Return the TodoList with the given displayName.
+        /// </summary>
+        /// <param name="name">the displayName to match</param>
+        /// <returns>the TodoList</returns>
+        /// <exception cref="KeyNotFoundException">if not found</exception>
+        /// <remarks>TODO_LISTARGUMENT: add Dictionary cache</remarks>
         public async Task<TodoList> GetListAsync(string name)
         {
             var lists = await PopulateListsAsync();
             // TODO_ERRORHANDLING: right now InvokeAsync will report as Unhandled Exception. Need prettier display
-            var list = lists.FirstOrDefault(l => l.displayName == name);
-            if (list == null)
-                throw new KeyNotFoundException("Unrecognized List: " + name);
+            var list = lists.FirstOrDefault(l => l.displayName == name)
+                ?? throw new KeyNotFoundException("Unrecognized List: " + name);
             return list;
         }
 

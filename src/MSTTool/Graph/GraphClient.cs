@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Graph;
 using NuGet.Common;
 using System;

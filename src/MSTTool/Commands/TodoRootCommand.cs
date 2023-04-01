@@ -13,7 +13,7 @@ namespace Todo.MSTTool.Commands
     {
         // HACK: drp033123 - Not all Commands use the FolderOption, but including it as a GlobalOption has the advntage of it automatically appearing in the help display.
         //  We expose it as a static so child commands can access the Option object for SetHandler
-        public static Option<string> FolderOption = new Option<string>("-folder", "Set the output folder");
+        public static Option<string> FolderOption = new Option<string>("-folder", "Set the output folder. Can be enclosed in double quotes.");
 
         public TodoRootCommand(IServiceProvider serviceProvider)
         {
