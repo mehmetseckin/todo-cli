@@ -8,7 +8,7 @@
 
 # MST Tool
 
-MSTTool is a command-line interface to access the Microsoft To Do Graph API, using C# and .NET Core 3. Includes:
+MSTTool is a command-line interface to access Microsoft To Do via the Graph API, using C# and .NET Core. Includes:
 * an "export" function for exporting all your tasks to JSON files organized in a folder hierarchy to enable automated backups and text search.
 * a framework for making other API calls
 * *[Not Implemented]* a "sync" function to export and remove deleted tasks, so you can automate backing up your tasks to a repo or other service
@@ -22,7 +22,7 @@ The impetus for creating this tool are limitations with Microsoft To Do, which i
 * Accidental Complete: Similarly, it is easy to accidentally "complete" a task. While you can easily "uncomplete" a task, depending on the context you were in, you may not know which task it is.
 * Performance: As the size of your Task database grows (including completed Tasks), clients (particularly on some platforms like iOS) suffer significant problems with responsiveness, requiring pruning down the number of Tasks. This requires manually "deleting" old completed tasks (again, Outlook can help, but an automated solution would be better).
 
-This particular project is forked from [todo-cli](https://github.com/mehmetseckin/todo-cli). This project is a refactor that follows the top-level configuration and command structure, but otherwise uses a different implementation.
+This project is forked from [todo-cli](https://github.com/mehmetseckin/todo-cli). It is a refactor that follows the original's top-level configuration, but otherwise uses a different implementation.
 
 ## Getting Started
 
