@@ -64,7 +64,7 @@ vi appsettings.json
 # Export
 todo export
 todo export -folder=ToFolder
-todo export OnlyList -folder=ToFolder
+todo export OnlyList -folder="To Folder"
 ```
 
 ### Configuration
