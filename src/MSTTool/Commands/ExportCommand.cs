@@ -17,22 +17,22 @@ using Todo.Core.Util;
 namespace Todo.MSTTool.Commands
 {
     /// <summary>
-    /// Example usage "todo export" or "todo export LIST" or "todo export LIST -folder FOLDER"
+    /// Example usage "todo export" or "todo export LIST" or "todo export LIST -folder FOLDER".
     /// </summary>
     public class ExportCommand : TargetListFolderCommandBase
     {
-        public DirectoryInfo ExportRoot { get; private set; }
-
-        public ExportCommand(IServiceProvider serviceProvider) : base("export", serviceProvider)
+        public ExportCommand(IServiceProvider serviceProvider) : this("export", serviceProvider)
         {
             Description = "Exports ToDo items to JSON files. Optionally takes target list name.";
         }
 
-        // listName: null means all
+        protected ExportCommand(string commandName, IServiceProvider serviceProvider) : base(commandName, serviceProvider)
+        {
+            CreateExportRoot = true;
+        }
+
         public override Task RunFolderCommandAsync(string listName, string folder)
         {
-            ExportRoot = Directory.CreateDirectory(folder);
-
             return base.RunFolderCommandAsync(listName, folder);
         }
 
