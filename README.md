@@ -6,9 +6,13 @@
     />
 </p>
 
-# MSToDo Tool
+# MST Tool
 
-MSTTool is a command-line interface to access the Microsoft To Do REST API, using C# and .NET Core 3. Includes an "export" function for exporting all your tasks to JSON files organized in a folder hierarchy to enable automated backups.
+MSTTool is a command-line interface to access the Microsoft To Do REST API, using C# and .NET Core 3. Includes:
+* an "export" function for exporting all your tasks to JSON files organized in a folder hierarchy to enable automated backups and text search.
+* a framework for making other API calls
+* *[Not Implemented]* a "sync" function to export and remove deleted tasks, so you can automate backing up your tasks to a repo or other service
+* *[Not Implemented]* a "diff" function to compare two snapshots
 
 ## Background
 
@@ -16,19 +20,19 @@ The impetus for creating this tool are limitations with Microsoft To Do, which i
 * Backup: There is no easy way to backup or export your Tasks. Outlook can interface with your Tasks, and can Export, but only through cumbersome manual steps to a broken CSV format or to an unfriendly PST format.
 * Accidental Delete: It is easy to accidentally delete a task, with limited Undo functionality and no history. This can be frustrating if you accidentally swiped left on a task and missed the Undo prompt. (Though I believe Outlook allows you to see and recover Deleted tasks.)
 * Accidental Complete: Similarly, it is easy to accidentally "complete" a task. While you can easily "uncomplete" a task, depending on the context you were in, you may not know which task it is.
+* Performance: As the size of your Task database grows (including completed Tasks), clients (particularly on some platforms like iOS) suffer significant problems with responsiveness, requiring pruning down the number of Tasks. This requires manually "deleting" old completed tasks (again, Outlook can help, but an automated solution would be better).
 
-This particular project is forked from [todo-cli](https://github.com/mehmetseckin/todo-cli). This project is a refactor that kept some of the top-level structure.
-
-## Objectives
-
-The objectives of MSTTool includes:
-* Enable automated backups of your Tasks
-* Enable "diffing" two snapshots of Tasks *[Not Implemented]*
-* Enable more flexible search functions (by virtue of it all being stored as text)
+This particular project is forked from [todo-cli](https://github.com/mehmetseckin/todo-cli). This project is a refactor that follows the top-level configuration and command structure, but otherwise uses a different implementation.
 
 ## Getting Started
 
+### ClientId [TODO]
+
+
+
 ### Build
+
+*NOTE: Building the project has only been tested with Visual Studio 2022.*
 
 ```
 # Clone the repository
@@ -44,6 +48,8 @@ dotnet build
 Alternately, you can use Visual Studio and open the MSTTool.sln.
 
 ### Run
+
+*NOTE: Running the application has only been tested on Windows.*
 
 The application will automatically prompt you to sign in with your Microsoft account, and ask for your consent to access your data when needed.
 
@@ -66,17 +72,31 @@ todo export OnlyList -folder=ToFolder
 
 ## Contributing
 
-Interested? You are awesome. Feel free to fork, do your thing and send a PR! Everything is appreciated.
+You are welcome to contribute.
 
-## Code of Conduct
+## Dependencies
 
-Be nice to people, give constructive feedback, and have fun!
+This project is built using the following, among others.
 
-## Stack
-
-This project is built using the following nuggets of awesomeness, and many more. Many thanks to the folks who are working on and maintaining these products.
-
+- [Microsoft.Extensions.Configuration](https://asp.net)
+- [Microsoft.Extensions.DependencyInjection](https://github.com/dotnet/runtime)
+- [Microsoft.Graph](https://developer.microsoft.com/graph)
+- [Microsoft.Identity.Client](https://go.microsoft.com/fwlink/?linkid=844761)
 - [.NET Core 3](https://github.com/dotnet/core)
+- [Nuget.Common](https://aka.ms/nugetprj) - for AsyncLazy
 - [System.CommandLine](https://github.com/dotnet/command-line-api)
-- [Microsoft Graph Beta SDK](https://github.com/microsoftgraph/msgraph-beta-sdk-dotnet)
-- [Inquirer.cs](https://github.com/agolaszewski/Inquirer.cs)
+
+## Backlog
+
+Big Things:
+* Sync command: same as export, but delete old tasks that no longer exist
+* Diff command: compare two exported folders
+* Purge command: use the API to cleanup old "completed" tasks according to some rules. E.g. repeating tasks beyond the last "X".
+* Releases: setup github releases
+* Cross-platform: test if works on other platforms
+* Consider switching to .NET Standard or Framework so we can upgrade the packages.
+
+Little Things:
+* the TODO.txt file contains some items
+* other items are flagged in code using a "TODO" comment
+
