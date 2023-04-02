@@ -2,7 +2,7 @@ TODO 3/30/23:
 
 6.3) Lists: cache mapping from displayName to Id so don't have to retrieve each time [TODO_LISTARGUMENT]
 
-9) sync command: delete old tasks that no longer exist
+9.2) sync: option to move deleted old JSON files to a Trash folder
 
 13) diff command: compare two export folders and report tasks that have been deleted
 

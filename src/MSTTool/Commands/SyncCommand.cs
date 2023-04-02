@@ -75,14 +75,17 @@ namespace Todo.MSTTool.Commands
             base.OnTodoListExported(list);
 
             Console.WriteLine("RemoveDeletedTasks:{0}", list.displayName);
-            //if (RemainingFiles.TryGetValue(listName, out var listRemainingFiles))
-            //{
-            //    foreach (var fi in listRemainingFiles)
-            //    {
-            //        Console.WriteLine("Sync.Delete:{0}", fi);
-            //        //fnord
-            //    }
-            //}
+            if (RemainingFiles.TryGetValue(list.displayName, out var listRemainingFiles))
+            {
+                foreach (var fi in listRemainingFiles.Values)
+                {
+                    // TODO: deserialize the file to get the task.title
+                    Console.WriteLine("Sync.Delete:{0}", fi.Name);
+                    fi.Delete();
+                }
+
+                Console.WriteLine("RemoveDeletedTasks:{0} Removed:{1}", list.displayName, listRemainingFiles.Count);
+            }
         }
     }
 }
