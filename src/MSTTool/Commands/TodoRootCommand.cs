@@ -38,6 +38,7 @@ namespace Todo.MSTTool.Commands
             AddCommand(new ListCommand(serviceProvider));
             AddCommand(new ListsCommand(serviceProvider));
             AddCommand(new ExportCommand(serviceProvider));
+            AddCommand(new SyncCommand(serviceProvider));
             if (config.SupportsWrite)
             {
                 throw new NotImplementedException();
