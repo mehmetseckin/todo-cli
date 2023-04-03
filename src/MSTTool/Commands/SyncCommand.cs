@@ -100,7 +100,7 @@ namespace Todo.MSTTool.Commands
         {
             base.OnTodoListExported(list);
 
-            Console.WriteLine("RemoveDeletedTasks:{0}", list.displayName);
+            //Console.WriteLine("RemoveDeletedTasks:{0}", list.displayName);
             if (RemainingFiles.TryGetValue(list.displayName, out var listRemainingFiles))
             {
                 foreach (var fi in listRemainingFiles.Values)
@@ -111,7 +111,7 @@ namespace Todo.MSTTool.Commands
                         fi.Delete();
                 }
 
-                Console.WriteLine("RemoveDeletedTasks:{0} Removed:{1}", list.displayName, listRemainingFiles.Count);
+                Console.WriteLine("RemovedDeletedTasks:{0} Removed:{1}", list.displayName, listRemainingFiles.Count);
             }
         }
     }
