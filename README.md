@@ -66,8 +66,10 @@ todo export
 todo export -folder=ToFolder
 todo export OnlyList -folder="To Folder"
 
-# Sync
+# Sync - Preview
 todo sync -folder=ToFolder -preview
+
+# Sync - Deleted task JSON will be moved to a "__Deleted" folder
 todo sync OnlyList
 ```
 

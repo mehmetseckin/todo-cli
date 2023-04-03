@@ -17,6 +17,14 @@ namespace Todo.MSTTool
         //[DefaultValue("https://graph.microsoft.com/v1.0/me/tasks")]
         public string BaseUri { get; set; }
 
+        /// <summary>
+        /// Default target folder for Export/Sync
+        /// </summary>
         public string TargetFolder { get; set; }
+
+        /// <summary>
+        /// Subfolder of TargetFolder where deleted tasks will be moved: "{TargetFolder}/{DeletedSubFolder}/{ListName}".
+        /// </summary>
+        public string DeletedSubFolder { get; set; }
     }
 }

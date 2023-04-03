@@ -69,6 +69,13 @@ namespace Todo.MSTTool.Commands
         {
             Console.WriteLine("RunFolderCommand:{0} TargetList:{1} TargetFolder:{2}", Name, listName, targetFolder);
 
+            // check for conflict with reserved name
+            // TODO: drp040323 - rename conflicting this to a non-clashing name. Better solutions:
+            // B) treat "__" prefix as reserved and always store lists with that prefix in another folder
+            // C) store all exported tasks one level down in "{TargetFolder}/Tasks/". 
+            if (listName == Config.DeletedSubFolder)
+                throw new NotImplementedException("Reserved name handling not implemented");
+
             // CODEP: if fails, then assume it already emit the error
             if (!TrySetupExportRoot(targetFolder))
                 return;

@@ -15,14 +15,27 @@ namespace Todo.MSTTool.Commands
 {
     public class SyncCommand : ExportCommand
     {
+        public enum EDeleteHandling
+        {
+            // specify "-preview"
+            Preview,
+            // default behavior
+            MoveToDeletedFolder,
+            // ASNEEDED: drp040323 - option to set this behavior. E.g. "-delete" or "-force"
+            HardDelete
+        }
+
         public static Option<bool> PreviewOption = new ("-preview", "Don't actually delete files.");
 
         // TECH: as "export" writes out tasks, they are removed from here.
         // TECH: we would like to store FileName, but FileInfo.Equals() doesn't work, so instead we need to use the fi.Name as the key
         public Dictionary<string, Dictionary<string, FileInfo>> RemainingFiles { get; } = new();
 
-        // HACK_OPTIONS
-        public bool IsPreviewMode { get; set; }
+        public EDeleteHandling DeleteHandling { get; set; } = EDeleteHandling.MoveToDeletedFolder;
+
+        public bool IsPreviewMode => DeleteHandling == EDeleteHandling.Preview;
+
+        public DirectoryInfo DeletedStagingFolder { get; private set; }
 
         public SyncCommand(IServiceProvider serviceProvider) : base("sync", serviceProvider)
         {
@@ -49,12 +62,15 @@ namespace Todo.MSTTool.Commands
             */
         }
 
-        // HACK_OPTIONS
+        // HACK_OPTIONS: modifying object state for both isPreview and targetFolder
         public virtual Task RunSyncCommandAsync(string listName, string targetFolder, bool isPreview)
         {
-            IsPreviewMode = isPreview;
+            if (isPreview)
+                DeleteHandling = EDeleteHandling.Preview;
             if (IsPreviewMode)
-                Console.WriteLine("Sync: PreviewMode");
+                Console.WriteLine("Sync.DeleteHandling = {0}", DeleteHandling);
+
+            DeletedStagingFolder = new DirectoryInfo(Path.Combine(targetFolder, Config.DeletedSubFolder));
 
             return RunFolderCommandAsync(listName, targetFolder);
         }
@@ -103,15 +119,47 @@ namespace Todo.MSTTool.Commands
             //Console.WriteLine("RemoveDeletedTasks:{0}", list.displayName);
             if (RemainingFiles.TryGetValue(list.displayName, out var listRemainingFiles))
             {
-                foreach (var fi in listRemainingFiles.Values)
+                try
                 {
-                    // TODO: deserialize the file to get the task.title
-                    Console.WriteLine("Sync.Delete:{0}", fi.Name);
-                    if (!IsPreviewMode)
-                        fi.Delete();
+                    foreach (var fi in listRemainingFiles.Values)
+                        HandleDeletedItem(list, fi);
+                    Console.WriteLine("RemovedDeletedTasks:{0} Removed:{1}", list.displayName, listRemainingFiles.Count);
                 }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("ERROR: {0}", ex.ToString());
+                }
+            }
+        }
 
-                Console.WriteLine("RemovedDeletedTasks:{0} Removed:{1}", list.displayName, listRemainingFiles.Count);
+        protected virtual void HandleDeletedItem(TodoList list, FileInfo fi)
+        {
+            Console.Write("Sync.Delete:{0}", fi.Name);
+
+            // TODO: deserialize the file to get the task.title
+            switch (DeleteHandling)
+            {
+                case EDeleteHandling.Preview:
+                    Console.WriteLine(" [Preview]");
+                    break;
+                case EDeleteHandling.MoveToDeletedFolder:
+                    var deletedListFolder = new DirectoryInfo(Path.Combine(DeletedStagingFolder.FullName, list.displayName));
+                    Console.WriteLine(" [{0}]", deletedListFolder);
+
+                    // CODEP: FileInfo.MoveTo() requires the folder to exist
+                    if (!deletedListFolder.Exists)
+                        deletedListFolder.Create();
+
+                    // TODO: drp040323 - if file already exists, either we can specify the overwrite flag, or  we create a unique filename
+                    var deletedItemFileName = Path.Combine(deletedListFolder.FullName, fi.Name);
+                    fi.MoveTo(deletedItemFileName, overwrite: true);
+                    break;
+                case EDeleteHandling.HardDelete:
+                    Console.WriteLine(" [Delete]");
+                    fi.Delete();
+                    break;
+                default:
+                    throw new NotImplementedException();
             }
         }
     }
