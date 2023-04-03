@@ -4,6 +4,7 @@ using Microsoft.Graph.DeviceManagement.WindowsInformationProtectionAppLearningSu
 using Microsoft.Graph.Models;
 using System;
 using System.Collections.Generic;
+using System.CommandLine;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -14,42 +15,67 @@ namespace Todo.MSTTool.Commands
 {
     public class SyncCommand : ExportCommand
     {
+        public static Option<bool> PreviewOption = new ("-preview", "Don't actually delete files.");
+
         // TECH: as "export" writes out tasks, they are removed from here.
         // TECH: we would like to store FileName, but FileInfo.Equals() doesn't work, so instead we need to use the fi.Name as the key
         public Dictionary<string, Dictionary<string, FileInfo>> RemainingFiles { get; } = new();
 
+        // HACK_OPTIONS
+        public bool IsPreviewMode { get; set; }
+
         public SyncCommand(IServiceProvider serviceProvider) : base("sync", serviceProvider)
         {
             Description = "Exports ToDo items to JSON files, and deletes files from a previous export where the item no longer exists. Optionally takes target list name.";
+
+            AddOption(PreviewOption);
+
+            // HACK_OPTIONS+TODO: drp040223 - need InvocationContext to be passed to our base class handler so we can pull out arbitrary parameters in derived classes.
+            //  Meantime, we'll just store the parameter in the command class.
+            this.SetHandler((l, f, p) => RunSyncCommandAsync(l, f ?? Config.TargetFolder, p),
+                ListArgument,
+                TodoRootCommand.FolderOption,
+                PreviewOption);
+
+            /* WIP
+            Handler = new AnonymousCommandHandler(
+            context =>
+            {
+                var value1 = GetValueForHandlerParameter(symbol1, context);
+                var value2 = GetValueForHandlerParameter(symbol2, context);
+
+                return handle(value1!, value2!);
+            });
+            */
         }
 
-        public override async Task RunFolderCommandAsync(string listName, string folder)
+        // HACK_OPTIONS
+        public virtual Task RunSyncCommandAsync(string listName, string targetFolder, bool isPreview)
         {
-            // first, build a list of existing files by list
-            UpdateExportedTaskList(listName, folder);
+            IsPreviewMode = isPreview;
+            if (IsPreviewMode)
+                Console.WriteLine("Sync: PreviewMode");
 
-            await base.RunFolderCommandAsync(listName, folder);
+            return RunFolderCommandAsync(listName, targetFolder);
         }
 
-        private void UpdateExportedTaskList(string listName, string folder)
+
+        public override Task RunCommandAsync(TodoList list)
         {
-            if (listName == null)
-            {
-                foreach (var dir in AWUtil.FindAllSubFolders(folder))
-                {
-                    listName = dir.Name;
-                    UpdateExportedTaskList(listName, folder);
-                }
-            }
-            else
-            {
-                Console.WriteLine("UpdateExportedTasks:{0}", listName);
-                var listFolder = Path.Combine(folder, listName);
-                var files = AWUtil.FindAllFiles(listFolder, "*.json")
-                    .ToDictionary(fi => fi.Name, fi => fi);
-                RemainingFiles[listName] = files;
-                Console.WriteLine("UpdateExportedTasks:{0} Files:{1}", listName, files.Count);
-            }
+            UpdateExportedTaskList(list);
+
+            return base.RunCommandAsync(list);
+        }
+
+        private void UpdateExportedTaskList(TodoList list)
+        {
+            var listName = list.displayName;
+            //Console.WriteLine("UpdateExportedTasks:{0}", listName);
+            var listFolder = Path.Combine(ExportRoot.FullName, list.displayName);
+            var files = AWUtil.FindAllFiles(listFolder, "*.json")
+                .ToDictionary(fi => fi.Name, fi => fi);
+            RemainingFiles[listName] = files;
+            Console.WriteLine("PreviouslyExportedTasks:{0} Files:{1}", listName, files.Count);
         }
 
         protected override void OnTodoItemExported(TodoList list, TodoItem item, FileInfo fi)
@@ -81,7 +107,8 @@ namespace Todo.MSTTool.Commands
                 {
                     // TODO: deserialize the file to get the task.title
                     Console.WriteLine("Sync.Delete:{0}", fi.Name);
-                    fi.Delete();
+                    if (!IsPreviewMode)
+                        fi.Delete();
                 }
 
                 Console.WriteLine("RemoveDeletedTasks:{0} Removed:{1}", list.displayName, listRemainingFiles.Count);
