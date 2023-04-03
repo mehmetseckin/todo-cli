@@ -91,7 +91,8 @@ namespace Todo.MSTTool.Commands
             var files = AWUtil.FindAllFiles(listFolder, "*.json")
                 .ToDictionary(fi => fi.Name, fi => fi);
             RemainingFiles[listName] = files;
-            Console.WriteLine("PreviouslyExportedTasks:{0} Files:{1}", listName, files.Count);
+            if (files.Count > 0)
+                Console.WriteLine("PreviouslyExportedTasks:{0} Files:{1}", listName, files.Count);
         }
 
         protected override void OnTodoItemExported(TodoList list, TodoItem item, FileInfo fi)
@@ -123,7 +124,8 @@ namespace Todo.MSTTool.Commands
                 {
                     foreach (var fi in listRemainingFiles.Values)
                         HandleDeletedItem(list, fi);
-                    Console.WriteLine("RemovedDeletedTasks:{0} Removed:{1}", list.displayName, listRemainingFiles.Count);
+                    if (listRemainingFiles.Count > 0)
+                        Console.WriteLine("RemovedDeletedTasks:{0} Removed:{1}", list.displayName, listRemainingFiles.Count);
                 }
                 catch (Exception ex)
                 {
