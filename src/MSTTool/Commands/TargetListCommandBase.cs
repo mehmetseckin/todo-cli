@@ -45,7 +45,7 @@ namespace Todo.MSTTool.Commands
 
         public virtual async Task RunCommandAsync(string listName)
         {
-            Console.WriteLine("RunCommand:{0} TargetList:{1}", Name, listName);
+            Console.WriteLine("RunCommand:{0} TargetList:{1}", Name, listName ?? "(all)");
 
             if (listName != null)
             {

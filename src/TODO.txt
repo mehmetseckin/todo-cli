@@ -1,14 +1,10 @@
-TODO 3/30/23:
+TODO 4/3/23:
 
 6.3) Lists: cache mapping from displayName to Id so don't have to retrieve each time [TODO_LISTARGUMENT]
 
-9.2) sync: option to move deleted old JSON files to a Trash folder
-
-13) diff command: compare two export folders and report tasks that have been deleted
-
 14) OPTIMIZE: parallel tasks so we can export multiple lists at a time
 
-15) purge command: cleanup old "complete" tasks according to some safe criteria. 
+15) purge command: (Writes to API) cleanup old "complete" tasks according to some safe criteria. 
 - E.g. repeating tasks, oldest except last "X"
 - by default preview mode
 - option to commit
@@ -20,7 +16,14 @@ TODO 3/30/23:
 - REQ: use task.title
 - ISSUE: there may be multiple tasks with the same title, and we need a deterministic way to disambiguate.
 
+19) EXE: rename to MSTTool
+
 REGRESS:
 19) Cross-Platform: test if still works on other platforms
+
+P2:
+13) diff command: compare two export folders 
+
+
 
 
