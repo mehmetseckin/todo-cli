@@ -6,7 +6,6 @@ using System.IO;
 using System.Threading.Tasks;
 using Todo.MSTTool.Commands;
 using Todo.Core.Model;
-using Todo.Core.Util;
 
 namespace MSTTool.Commands
 {

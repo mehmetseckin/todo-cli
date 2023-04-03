@@ -38,7 +38,6 @@ namespace Todo.MSTTool.Commands
             Console.WriteLine("TargetFolder: {0}", Path.GetFullPath(targetFolder));
 
             ExportRoot = new DirectoryInfo(targetFolder);
-            var isAbsolutePath = Path.IsPathRooted(targetFolder);
             if (ExportRoot.Exists)
             {
                 Console.WriteLine("TargetFolder found: {0}", ExportRoot);

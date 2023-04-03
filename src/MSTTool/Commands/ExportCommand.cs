@@ -12,7 +12,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Todo.Core.Model;
 using Todo.Core.Repository;
-using Todo.Core.Util;
+using AWEngine.Util;
 
 namespace Todo.MSTTool.Commands
 {
@@ -40,22 +40,33 @@ namespace Todo.MSTTool.Commands
         {
             Console.WriteLine("Export List: {0}", list.displayName);
 
-            var listFolderName = TodoUtil.NormalizeFileName(list.displayName);
+            var listFolderName = AWUtil.NormalizeFileName(list.displayName);
             var subdir = ExportRoot.CreateSubdirectory(listFolderName);
             var tasksAsync = Repo.GetListTasksAsyncEnumerable(list);
             int tasksCount = 0;
             await foreach (var task in tasksAsync)
             {
                 // TECH: write out filename with full id, in case task is renamed or there are duplicate display Names
-                //var fileName = TodoUtil.NormalizeFileName(task.title) + ".json";
-                var fileName = TodoUtil.NormalizeFileName(task.id) + ".json";
+                //var fileName = Util.NormalizeFileName(task.title) + ".json";
+                var fileName = AWUtil.NormalizeFileName(task.id) + ".json";
                 var path = Path.Combine(subdir.FullName, fileName);
                 var serialized = task.OriginalSerialized;
                 await File.WriteAllTextAsync(path, serialized);
+                var fi = new FileInfo(path);
+                OnTodoItemExported(list, task, fi);
                 tasksCount++;
             }
 
             Console.WriteLine("Exported List: {0} [{1} tasks]", list.displayName, tasksCount);
+            OnTodoListExported(list);
+        }
+
+        protected virtual void OnTodoItemExported(TodoList list, TodoItem item, FileInfo fi)
+        {
+        }
+
+        protected virtual void OnTodoListExported(TodoList list)
+        {
         }
     }
 }
