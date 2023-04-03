@@ -10,9 +10,9 @@
 
 MSTTool is a command-line interface to access your Microsoft To Do Tasks via the Graph API, using C# and .NET Core. Includes:
 * an "export" function for exporting all your tasks to JSON files organized in a folder hierarchy to enable automated backups and text search.
-* a framework for making other API calls
-* *[Not Implemented]* a "sync" function to export and remove deleted tasks, so you can automate backing up your tasks to a repo or a file backup service
+* a "sync" function to export and remove deleted tasks, so you can automate backing up your tasks to a repo or a file backup service
 * *[Not Implemented]* a "diff" function to compare two snapshots
+* a framework for making other API calls
 
 ## Background
 
@@ -65,6 +65,10 @@ vi appsettings.json
 todo export
 todo export -folder=ToFolder
 todo export OnlyList -folder="To Folder"
+
+# Sync
+todo sync -folder=ToFolder -preview
+todo sync OnlyList
 ```
 
 ### Configuration
