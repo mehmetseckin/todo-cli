@@ -11,6 +11,8 @@ using System.Net.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
 using System.Linq;
+using System.CommandLine.Parsing;
+using Tavis.UriTemplates;
 
 namespace Todo.MSTTool.Auth
 {
@@ -43,27 +45,52 @@ namespace Todo.MSTTool.Auth
             });
         }
 
+        private async Task<AuthenticationResult> LoginInteractiveAsync(IPublicClientApplication app)
+        {
+            Console.WriteLine("Login Interactive");
+            var result = await app.AcquireTokenInteractive(Config.Scopes)
+                    .ExecuteAsync();
+            return result;
+        }
+
+        private async Task<AuthenticationResult> LoginAsync(IPublicClientApplication app, IAccount account)
+        {
+            Console.WriteLine("Login: {0}", account.Username);
+
+            var result = await app.AcquireTokenSilent(Config.Scopes, account)
+                              .ExecuteAsync();
+
+            return result;
+        }
+
         // REF: https://learn.microsoft.com/en-us/azure/active-directory/develop/msal-net-acquire-token-silently
         private async Task<AuthenticationResult> GetAuthenticationResultAsync(IPublicClientApplication app)
         {
             // arbitrarily choose the first account actually signed in the token cache
             var accounts = await app.GetAccountsAsync();
+            var account = accounts.FirstOrDefault();
 
-            AuthenticationResult result;
-            try
+            AuthenticationResult result = null;
+            if (account != null)
             {
-                result = await app.AcquireTokenSilent(Config.Scopes, accounts.FirstOrDefault())
-                                  .ExecuteAsync();
-            }
-            catch (MsalUiRequiredException ex)
-            {
-                // A MsalUiRequiredException happened on AcquireTokenSilent.
-                // This indicates you need to call AcquireTokenInteractive to acquire a token
-                Debug.WriteLine($"MsalUiRequiredException: {ex.Message}");
+                try
+                {
+                    result = await LoginAsync(app, account);
+                }
+                catch (MsalUiRequiredException ex)
+                {
+                    // A MsalUiRequiredException happened on AcquireTokenSilent.
+                    // This indicates you need to call AcquireTokenInteractive to acquire a token
+                    Debug.WriteLine($"MsalUiRequiredException: {ex.Message}");
 
-                result = await app.AcquireTokenInteractive(Config.Scopes)
-                                    .ExecuteAsync();
+                    result = await LoginInteractiveAsync(app);
+                }
             }
+            else
+            {
+                result = await LoginInteractiveAsync(app);
+            }
+                
 
             return result;
         }
