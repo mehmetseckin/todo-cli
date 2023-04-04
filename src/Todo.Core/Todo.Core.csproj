@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <LangVersion>9.0</LangVersion>
+    <Authors>pappde</Authors>
+    <Company>Arriboworks, LLC</Company>
   </PropertyGroup>
 
   <ItemGroup>

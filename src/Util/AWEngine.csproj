@@ -4,6 +4,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <LangVersion>9.0</LangVersion>
+    <Authors>pappde</Authors>
+    <Company>Arriboworks, LLC</Company>
   </PropertyGroup>
   
 </Project>
