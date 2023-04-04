@@ -38,7 +38,7 @@ namespace Todo.MSTTool.Commands
 
         public override async Task RunCommandAsync(TodoList list)
         {
-            Console.WriteLine("Export List: {0}", list.displayName);
+            //Console.WriteLine("Export List: {0}", list.displayName);
 
             var listFolderName = AWUtil.NormalizeFileName(list.displayName);
             var subdir = ExportRoot.CreateSubdirectory(listFolderName);
