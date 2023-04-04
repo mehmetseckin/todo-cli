@@ -1,4 +1,7 @@
-﻿using Microsoft.Identity.Client;
+﻿// TECH:
+// 1) Token Cache: stored in runtime folder as "{app}.dll.msalcache.bin3"
+
+using Microsoft.Identity.Client;
 using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Abstractions;
 using NuGet.Common;
