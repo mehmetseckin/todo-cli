@@ -26,10 +26,12 @@ Content:
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace Todo.Core.Model
 {
+    [DebuggerDisplay("displayName={displayName}")]
     public class TodoList
     {
         public string displayName { get; set; }

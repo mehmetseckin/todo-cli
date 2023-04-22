@@ -25,7 +25,7 @@ namespace MSTTool.Commands
             await foreach (var task in tasksAsync)
             {
                 // TODO: drp033123 - include checkmark - see original project
-                Console.WriteLine("[{2}] {0}/{1}", list.displayName, task.title, task.status);
+                Console.WriteLine("[{2}] {0}/{1} [{3}]", list.displayName, task.title, task.status, task.id);
                 tasksCount++;
             }
 

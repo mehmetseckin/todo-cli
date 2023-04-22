@@ -49,7 +49,12 @@ namespace Todo.MSTTool.Commands
 
             if (listName != null)
             {
-                var list = await Repo.GetListAsync(listName);
+                var list = await Repo.GetListSafeAsync(listName);
+                if (list == null)
+                {
+                    // TODO_ERRORHANDLING: right now InvokeAsync will report as Unhandled Exception. Need prettier display
+                    throw new KeyNotFoundException("Unrecognized List: " + listName);
+                }
                 await RunCommandAsync(list);
             }
             else // export all

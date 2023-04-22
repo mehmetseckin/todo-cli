@@ -1,5 +1,10 @@
 TODO 4/3/23:
 
+P1:
+21) BUG: I have 66 lists. The "lists" command returns the first 50, and nextLink is "https://graph.microsoft.com/v1.0/me/todo/lists?$skip=50",
+- calling that returns only 3. The remaining lists never are returned.
+
+BACKLOG:
 6.3) Lists: cache mapping from displayName to Id so don't have to retrieve each time [TODO_LISTARGUMENT]
 
 14) OPTIMIZE: parallel tasks so we can export multiple lists at a time
@@ -19,7 +24,7 @@ TODO 4/3/23:
 19) EXE: rename to MSTTool
 
 REGRESS:
-19) Cross-Platform: test if still works on other platforms
+20) Cross-Platform: test if still works on other platforms
 
 P2:
 13) diff command: compare two export folders 

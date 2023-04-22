@@ -1,5 +1,11 @@
 HIST:
 drp032323 - updated
+drp042123 - added details
+
+CHANGE LIST
+- when a task changes List, it gets a new task.id
+- however, the task.title and createdDateTime are unchanged.
+S
 
 JSON /lists response
 Content:
