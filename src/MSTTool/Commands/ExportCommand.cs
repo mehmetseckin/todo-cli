@@ -63,6 +63,7 @@ namespace Todo.MSTTool.Commands
 
         protected virtual void OnTodoItemExported(TodoList list, TodoItem item, FileInfo fi)
         {
+            Repo.OnTodoItemExported(list, item, fi);
         }
 
         protected virtual void OnTodoListExported(TodoList list)

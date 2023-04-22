@@ -2,6 +2,7 @@
 using Microsoft.Graph;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
 using System.Text;
@@ -118,5 +119,18 @@ namespace Todo.Core.Repository
             Lists.AddRange(jsonLists.value);
             return jsonLists.NextLink;
         }
+
+        #region Exported
+
+        private TodoItemMap _exportedMap = new TodoItemMap();
+
+        public void OnTodoItemExported(TodoList list, TodoItem item, FileInfo fi)
+        {
+            //fnord may not need
+            item.OnTodoItemExported(list, fi);
+            _exportedMap.AddTodoItem(item);
+        }
+
+        #endregion
     }
 }

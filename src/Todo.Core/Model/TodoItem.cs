@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.Graph;
@@ -74,5 +75,26 @@ namespace Todo.Core.Model
         {
             return title;
         }
+
+        #region Exported
+
+        public TodoItemKey Key { get; private set; }
+
+        public TodoList List { get; private set; }
+
+        public FileInfo FileInfo { get; private set; }
+
+        public void OnTodoItemExported(TodoList list, FileInfo fi)
+        {
+            if (FileInfo != null)
+                throw new InvalidOperationException();
+            List = list;
+            FileInfo = fi;
+
+            // TODO: set in OnDeserialized?
+            Key = new TodoItemKey(this);
+        }
+
+        #endregion
     }
 }
