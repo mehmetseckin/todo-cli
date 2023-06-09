@@ -1,10 +1,5 @@
 TODO 4/3/23:
 
-P1:
-21) BUG: I have 66 lists. The "lists" command returns the first 50, and nextLink is "https://graph.microsoft.com/v1.0/me/todo/lists?$skip=50",
-- calling that returns only 3. The remaining lists never are returned.
-- POSTED 4/21/23: https://feedbackportal.microsoft.com/feedback/idea/bddedd7d-c4e0-ed11-a81c-6045bdb98dea
-
 BACKLOG:
 6.3) Lists: cache mapping from displayName to Id so don't have to retrieve each time [TODO_LISTARGUMENT]
 

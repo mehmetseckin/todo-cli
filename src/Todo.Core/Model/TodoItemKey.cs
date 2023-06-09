@@ -25,5 +25,13 @@ namespace Todo.Core.Model
                 return hashcode;
             }
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not TodoItemKey other)
+                return false;
+            return title == other.title
+                && createdDateTime == other.createdDateTime;
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.Graph;
@@ -40,7 +41,7 @@ namespace Todo.Core.Model
       ]
     },
     */
-    public class TodoItem
+    public class TodoItem : IJsonOnDeserialized
     {
         public class Body
         {
@@ -76,6 +77,12 @@ namespace Todo.Core.Model
             return title;
         }
 
+        // TECH: invoked through IJsonOnDeserialized
+        public void OnDeserialized()
+        {
+            Key = new TodoItemKey(this);
+        }
+
         #region Exported
 
         public TodoItemKey Key { get; private set; }
@@ -90,9 +97,6 @@ namespace Todo.Core.Model
                 throw new InvalidOperationException();
             List = list;
             FileInfo = fi;
-
-            // TODO: set in OnDeserialized?
-            Key = new TodoItemKey(this);
         }
 
         #endregion

@@ -27,6 +27,7 @@ namespace Todo.MSTTool.Commands
 
         public static Option<bool> PreviewOption = new ("-preview", "Don't actually delete files.");
 
+        // map from listName
         // TECH: as "export" writes out tasks, they are removed from here.
         // TECH: we would like to store FileName, but FileInfo.Equals() doesn't work, so instead we need to use the fi.Name as the key
         public Dictionary<string, Dictionary<string, FileInfo>> RemainingFiles { get; } = new();
@@ -117,6 +118,7 @@ namespace Todo.MSTTool.Commands
         {
             base.OnTodoListExported(list);
 
+            // fnord don't delete now?
             //Console.WriteLine("RemoveDeletedTasks:{0}", list.displayName);
             if (RemainingFiles.TryGetValue(list.displayName, out var listRemainingFiles))
             {

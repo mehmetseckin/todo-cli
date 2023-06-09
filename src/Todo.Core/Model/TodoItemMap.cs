@@ -22,6 +22,7 @@ namespace Todo.Core.Model
      */
     public class TodoItemMap
     {
+        // TECH: is not thread safe, so we use _mutex
         private MultiMapList<TodoItemKey, TodoItem> _map = new();
         private object _mutex = new();
 
@@ -29,14 +30,12 @@ namespace Todo.Core.Model
         {
             if (item.Key == null)
                 throw new InvalidOperationException();
-            // TODO: is MultiMap thread safe?
             lock (_mutex)
                 _map.TryToAddMapping(item.Key, item);
         }
 
         public List<TodoItem> GetTodoItems(TodoItemKey key)
         {
-            //fnord not thread safe.
             lock (_mutex)
             {
                 _map.TryGetValue(key, out var todoItems);
@@ -50,6 +49,5 @@ namespace Todo.Core.Model
 
         }
 
-        public 
     }
 }

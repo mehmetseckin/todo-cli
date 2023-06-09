@@ -1,0 +1,15 @@
+### BUG_LISTS
+# I have 66 lists. The "lists" command returns the first 50, and nextLink is "https://graph.microsoft.com/v1.0/me/todo/lists?$skip=50",
+# calling that returns only 3. The remaining lists never are returned.
+# POSTED 4/21/23: https://feedbackportal.microsoft.com/feedback/idea/bddedd7d-c4e0-ed11-a81c-6045bdb98dea
+# NOTE 6/9/23: not appropriate venue - better to use https://learn.microsoft.com/en-us/answers/questions
+
+### pull all lists
+# BUG: only pulls 50. nextLink is null, or is $skip=50 which doesn't work.
+GET https://graph.microsoft.com/v1.0/me/todo/lists
+Authorization: Bearer {{{token}}
+ 
+### WORKAROUND: using lists/delta
+# REF: https://learn.microsoft.com/en-us/answers/questions/594742/microsoft-graph-todo-api-doesnt-return-all-task-li
+GET https://graph.microsoft.com/v1.0/me/todo/lists/delta
+Authorization: Bearer {{token}

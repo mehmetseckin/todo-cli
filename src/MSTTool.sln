@@ -9,6 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Todo.Core", "Todo.Core\Todo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FDD8D563-22DC-41E6-85FA-D39B72569A4E}"
 	ProjectSection(SolutionItems) = preProject
+		BugLists.http = BugLists.http
 		Protocol.txt = Protocol.txt
 		..\README.md = ..\README.md
 		TestApi.http = TestApi.http
