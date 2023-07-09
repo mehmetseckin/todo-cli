@@ -123,9 +123,15 @@ namespace Todo.Core.Repository
 
         private TodoItemMap _exportedMap = new TodoItemMap();
 
+        // RETURN: may be null
+        public List<TodoItem> FindTodoItems(TodoItemKey key)
+        {
+            return _exportedMap.GetTodoItemsSafe(key);
+        }
+
         public void OnTodoItemExported(TodoList list, TodoItem item, FileInfo fi)
         {
-            //fnord may not need
+            // TODO: drp070823 - may not need
             item.OnTodoItemExported(list, fi);
             _exportedMap.AddTodoItem(item);
         }

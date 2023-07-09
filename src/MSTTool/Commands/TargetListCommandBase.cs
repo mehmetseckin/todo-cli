@@ -64,10 +64,17 @@ namespace Todo.MSTTool.Commands
                 // OPTIMIZE: drp033023 - parallelize
                 foreach (var list in Repo.Lists)
                     await RunCommandAsync(list);
+
             }
+
+            await FinishCommandAsync(listName);
         }
 
         public abstract Task RunCommandAsync(TodoList list);
 
+        public virtual Task FinishCommandAsync(string listName)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

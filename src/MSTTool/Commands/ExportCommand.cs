@@ -57,8 +57,13 @@ namespace Todo.MSTTool.Commands
                 tasksCount++;
             }
 
+            // TODO: drp070823 - to we have property list.TasksCount?
+            OnTodoListExported(list, tasksCount);
+        }
+
+        protected virtual void LogTodoListExported(TodoList list, int tasksCount)
+        {
             Console.WriteLine("Exported List: {0} [{1} tasks]", list.displayName, tasksCount);
-            OnTodoListExported(list);
         }
 
         protected virtual void OnTodoItemExported(TodoList list, TodoItem item, FileInfo fi)
@@ -66,8 +71,9 @@ namespace Todo.MSTTool.Commands
             Repo.OnTodoItemExported(list, item, fi);
         }
 
-        protected virtual void OnTodoListExported(TodoList list)
+        protected virtual void OnTodoListExported(TodoList list, int tasksCount)
         {
+            LogTodoListExported(list, tasksCount);
         }
     }
 }

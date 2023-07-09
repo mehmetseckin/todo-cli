@@ -34,19 +34,14 @@ namespace Todo.Core.Model
                 _map.TryToAddMapping(item.Key, item);
         }
 
-        public List<TodoItem> GetTodoItems(TodoItemKey key)
+        public List<TodoItem> GetTodoItemsSafe(TodoItemKey key)
         {
             lock (_mutex)
             {
+                //fnordtest if not found, returns empty list or nll?
                 _map.TryGetValue(key, out var todoItems);
                 return todoItems;
             }
-        }
-
-        //fnord
-        public void LoadDeletedItems()
-        {
-
         }
 
     }

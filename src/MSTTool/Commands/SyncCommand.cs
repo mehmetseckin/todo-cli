@@ -1,5 +1,13 @@
-﻿using AWEngine.Linq;
+﻿// HIST:
+// drp070823 - TECH_HANDLE_MOVED: HandleMovedItem() - if a TodoItem is "moved" to another List, recognize that, and don't call HandleDeletedItem()
+
+// TODO:
+// 1) TODO: drp070823 - should Sync only delete if run "all" lists? (HandleRemainingFilesAsync)
+
+
+using AWEngine.Linq;
 using AWEngine.Util;
+using Azure;
 using Microsoft.Graph.DeviceManagement.WindowsInformationProtectionAppLearningSummaries.Item;
 using Microsoft.Graph.Models;
 using System;
@@ -8,8 +16,11 @@ using System.CommandLine;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Nodes;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Todo.Core.Model;
+using Microsoft.Graph.Reports.GetPrinterArchivedPrintJobsWithPrinterIdWithStartDateTimeWithEndDateTime;
 
 namespace Todo.MSTTool.Commands
 {
@@ -114,11 +125,19 @@ namespace Todo.MSTTool.Commands
             }
         }
 
+        protected override void LogTodoListExported(TodoList list, int tasksCount)
+        {
+            if (RemainingFiles.TryGetValue(list.displayName, out var listRemainingFiles))
+                Console.WriteLine("Exported List: {0} [{1} tasks] [{2} Missing]", list.displayName, tasksCount, listRemainingFiles.Count);
+            else
+                base.LogTodoListExported(list, tasksCount);
+        }
+
+        /* TECH_HANDLE_MOVED: removed this code - now done in HandleRemainingFiles
         protected override void OnTodoListExported(TodoList list)
         {
             base.OnTodoListExported(list);
 
-            // fnord don't delete now?
             //Console.WriteLine("RemoveDeletedTasks:{0}", list.displayName);
             if (RemainingFiles.TryGetValue(list.displayName, out var listRemainingFiles))
             {
@@ -133,6 +152,75 @@ namespace Todo.MSTTool.Commands
                 {
                     Console.WriteLine("ERROR: {0}", ex.ToString());
                 }
+        }
+        */
+        private async Task HandleRemainingFilesAsync()
+        {
+            /* TECH_HANDLE_MOVED: foreach GlobalRemainingFiles
+             *     item = Deserialize(file)
+             *     if FindInRepo(Name+createdDateTime)
+             *        EDeleteHandling.HardDelete
+             *     else
+             *        apply defined DeleteHandling (e.g. MoveToDeletedFolder)
+             * 
+             * TODO: drp070823 - if DeleteHandling==HardDelete, then there's no need actually do this, can just HandleDeletedItem()
+             */
+            foreach (var (listName, filesMap) in RemainingFiles)
+            {
+                var list = await Repo.GetListSafeAsync(listName);
+
+                foreach (var fi in filesMap.Values)
+                {
+                    TodoItem item;
+                    using (var stream = fi.OpenRead())
+                        item = JsonSerializer.Deserialize<TodoItem>(stream);
+
+                    // PRE: item.OnDeserialized() was run
+                    // ASNEEDED: item pair with fi
+                    var key = item.Key;
+                    var matches = Repo.FindTodoItems(key);
+                    if (matches != null)
+                    {
+                        //fnordtest assert matches.Count>0
+                        // item was (probably) "Moved", so HardDelete (unless Preview)
+                        // LOW: drp070823 - mark matches as "Moved"?
+                        HandleMovedItem(list, fi);
+                    }
+                    else
+                    {
+                        // item was (probably) not "Moved", so apply DeleteHandling
+                        // TECH: item.List is not set 
+                        HandleDeletedItem(list, fi);
+                    }
+                }
+
+            }
+        }
+
+        public override async Task FinishCommandAsync(string listName)
+        {
+            await base.FinishCommandAsync(listName);
+
+            await HandleRemainingFilesAsync();     
+        }
+
+        protected virtual void HandleMovedItem(TodoList list, FileInfo fi)
+        {
+            Console.Write("Sync.Moved:{0}", fi.Name);
+
+            // TODO: deserialize the file to get the task.title
+            switch (DeleteHandling)
+            {
+                case EDeleteHandling.Preview:
+                    Console.WriteLine(" [Preview]");
+                    break;
+                case EDeleteHandling.MoveToDeletedFolder:
+                case EDeleteHandling.HardDelete:
+                    Console.WriteLine(" [Delete]");
+                    fi.Delete();
+                    break;
+                default:
+                    throw new NotImplementedException();
             }
         }
 

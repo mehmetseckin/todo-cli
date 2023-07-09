@@ -67,6 +67,10 @@ namespace Todo.MSTTool.Commands
         // listName: null means all
         public virtual async Task RunFolderCommandAsync(string listName, string targetFolder)
         {
+            // drp070823 - allow "all" to work as well
+            if (listName == Config.TargetListAllAlias)
+                listName = null;
+
             Console.WriteLine("RunFolderCommand:{0} TargetList:{1} TargetFolder:{2}", Name, listName ?? "(all)", targetFolder);
 
             // check for conflict with reserved name

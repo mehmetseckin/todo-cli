@@ -26,5 +26,9 @@ namespace Todo.MSTTool
         /// Subfolder of TargetFolder where deleted tasks will be moved: "{TargetFolder}/{DeletedSubFolder}/{ListName}".
         /// </summary>
         public string DeletedSubFolder { get; set; }
+
+        // TODO: drp070823 - [DefaultValue] doesn't work, need to put in appsettings.json
+        [DefaultValue("all")]
+        public string TargetListAllAlias { get; set; }
     }
 }
