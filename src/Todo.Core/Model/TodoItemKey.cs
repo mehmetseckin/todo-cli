@@ -34,4 +34,37 @@ namespace Todo.Core.Model
                 && createdDateTime == other.createdDateTime;
         }
     }
+
+    // HACK_KEY2
+    public class TodoItemKey2
+    {
+        public DateTime createdDateTime { get; }
+
+        public TodoItemKey2(TodoItem item)
+        {
+            createdDateTime = item.createdDateTime;
+        }
+
+        public TodoItemKey2(TodoItemKey key1)
+        {
+            createdDateTime = key1.createdDateTime;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hashcode = 17;
+                hashcode += createdDateTime.GetHashCode();
+                return hashcode;
+            }
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not TodoItemKey other)
+                return false;
+            return createdDateTime == other.createdDateTime;
+        }
+    }
 }

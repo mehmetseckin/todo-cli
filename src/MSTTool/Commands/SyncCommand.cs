@@ -181,9 +181,9 @@ namespace Todo.MSTTool.Commands
                     var matches = Repo.FindTodoItems(key);
                     if (matches != null)
                     {
-                        //fnordtest assert matches.Count>0
                         // item was (probably) "Moved", so HardDelete (unless Preview)
                         // LOW: drp070823 - mark matches as "Moved"?
+                        // PRE: matches.Count>0
                         HandleMovedItem(list, fi);
                     }
                     else

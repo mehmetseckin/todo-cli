@@ -24,6 +24,7 @@ namespace Todo.Core.Model
     {
         // TECH: is not thread safe, so we use _mutex
         private MultiMapList<TodoItemKey, TodoItem> _map = new();
+        private MultiMapList<TodoItemKey2, TodoItem> _map2 = new();
         private object _mutex = new();
 
         public void AddTodoItem(TodoItem item)
@@ -31,15 +32,26 @@ namespace Todo.Core.Model
             if (item.Key == null)
                 throw new InvalidOperationException();
             lock (_mutex)
+            {
                 _map.TryToAddMapping(item.Key, item);
+                _map2.TryToAddMapping(item.Key2, item);
+            }
         }
 
         public List<TodoItem> GetTodoItemsSafe(TodoItemKey key)
         {
             lock (_mutex)
             {
-                //fnordtest if not found, returns empty list or nll?
+                // TECH: if not found, returns null
                 _map.TryGetValue(key, out var todoItems);
+                // HACK_KEY2: this is untested. If we do hit on Key2, we should log noisily.
+                if (todoItems == null)
+                {
+                    var key2 = new TodoItemKey2(key);
+                    _map2.TryGetValue(key2, out todoItems);
+                    if (todoItems != null && todoItems.Count > 1)
+                        return null;
+                }
                 return todoItems;
             }
         }
