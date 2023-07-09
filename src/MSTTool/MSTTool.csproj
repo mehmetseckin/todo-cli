@@ -12,7 +12,7 @@
     <PackageTags>microsoft-todo todo CLI export</PackageTags>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
-    <Version>0.3.1</Version>
+    <Version>0.4.0</Version>
     <AssemblyName>Todo</AssemblyName>
     <NoWin32Manifest>true</NoWin32Manifest>
     <StartupObject></StartupObject>
