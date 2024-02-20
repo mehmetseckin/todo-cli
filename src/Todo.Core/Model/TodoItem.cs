@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Graph;
+﻿namespace Todo.Core.Model;
 
-namespace Todo.Core.Model
+public class TodoItem
 {
-    public class TodoItem
-    {
-        public string Id { get; set; }
-        public string Subject { get; set; }
-        public bool IsCompleted { get; set; }
+    public string? Id { get; set; }
+    public string? Subject { get; set; }
+    public bool IsCompleted { get; set; }
+    public string Status { get; set; } = "NotStarted";
+    public DateTime? Completed { get; set; }
+    public string? ListId { get; set; }
 
-        public override string ToString() => Subject;
-    }
+    public override string ToString() => $"{Subject} - {Status} {(IsCompleted ? Completed?.ToString("yyyy-mm-dd") : string.Empty)}";
 }

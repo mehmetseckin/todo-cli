@@ -1,31 +1,26 @@
 ﻿using System;
 using System.CommandLine;
 using Todo.CLI.Handlers;
-using Todo.Core;
 
-namespace Todo.CLI.Commands
+namespace Todo.CLI.Commands;
+
+public class ListCommand : Command
 {
-    public class ListCommand : Command
+    private static readonly Option<bool> GetAllOption = new(["-a", "--all"], "Lists all to do items including the completed ones.");
+    private static readonly Option<bool> NoStatusOption = new(["--no-status"], "Suppresses the bullet indicating whether the item is completed or not.");
+    private static readonly Argument<string> ListNameArgument = new("list-name", "Only list tasks of this To-Do list.")
     {
-        public ListCommand(IServiceProvider serviceProvider) : base("list")
-        {
-            Description = "Retrieves a list of the to do items.";
+        Arity = ArgumentArity.ZeroOrOne
+    };
 
-            AddOption(GetAllOption());
-            AddOption(GetNoStatusOption());
+    public ListCommand(IServiceProvider serviceProvider) : base("list")
+    {
+        Description = "Retrieves a list of the to do items across all To-Do lists.";
 
-            Handler = ListCommandHandler.Create(serviceProvider);
-        }
+        Add(GetAllOption);
+        Add(NoStatusOption);
+        Add(ListNameArgument);
 
-        private Option GetAllOption()
-        {
-            return new Option(new string[] { "-a", "--all" }, "Lists all to do items including the completed ones.");
-        }
-
-        private Option GetNoStatusOption()
-        {
-            return new Option(new string[] { "--no-status" }, "Suppresses the bullet indicating whether the item is completed or not.");
-        }
-
+        this.SetHandler(ListCommandHandler.Create(serviceProvider), GetAllOption, NoStatusOption, ListNameArgument);
     }
 }
