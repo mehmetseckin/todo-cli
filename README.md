@@ -8,14 +8,14 @@
 
 # Todo CLI
 
-A cross-platform command-line interface to interact with Microsoft To Do, built using .NET Core 3.
+A cross-platform command-line interface to interact with Microsoft To Do, built using .NET 8.
 
 ## Build Status
 
 | Platform | Status |
 | ------ | ------------ |
 | CI | [![CI build status](https://dev.azure.com/mtseckin/todo-cli/_apis/build/status/CI)](https://dev.azure.com/mtseckin/todo-cli/_build/latest?definitionId=1) |
-| Windows 10 (x64) | [![Windows 10 (x64) build status](https://dev.azure.com/mtseckin/todo-cli/_apis/build/status/CD?stageName=win10_x64)](https://dev.azure.com/mtseckin/todo-cli/_build/latest?definitionId=5) |
+| Windows (x64) | [![Windows (x64) build status](https://dev.azure.com/mtseckin/todo-cli/_apis/build/status/CD?stageName=win_x64)](https://dev.azure.com/mtseckin/todo-cli/_build/latest?definitionId=5) |
 | Linux (x64) | [![Linux (x64) build status](https://dev.azure.com/mtseckin/todo-cli/_apis/build/status/CD?stageName=linux_x64)](https://dev.azure.com/mtseckin/todo-cli/_build/latest?definitionId=5) |
 | macOS X (x64) | [![macO X (x64) build status](https://dev.azure.com/mtseckin/todo-cli/_apis/build/status/CD?stageName=osx_x64)](https://dev.azure.com/mtseckin/todo-cli/_build/latest?definitionId=5) |
 
@@ -62,7 +62,7 @@ Be nice to people, give constructive feedback, and have fun!
 
 This project is built using the following nuggets of awesomeness, and many more. Many thanks to the folks who are working on and maintaining these products.
 
-- [.NET Core 3](https://github.com/dotnet/core)
+- [.NET 8](https://github.com/dotnet/core)
 - [System.CommandLine](https://github.com/dotnet/command-line-api)
 - [Microsoft Graph Beta SDK](https://github.com/microsoftgraph/msgraph-beta-sdk-dotnet)
-- [Inquirer.cs](https://github.com/agolaszewski/Inquirer.cs)
+- [Inquirer.cs](https://github.com/hayer/Inquirer.cs)
