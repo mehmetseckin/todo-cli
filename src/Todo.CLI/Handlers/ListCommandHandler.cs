@@ -45,7 +45,7 @@ public class ListCommandHandler
                 Console.Write(" ");
             }
 
-            Render(item);
+            Render(item, noStatus);
         }
     }
 
@@ -55,9 +55,9 @@ public class ListCommandHandler
         foreach (var item in list.Tasks) Render(item);
     }
 
-    private static void Render(TodoItem item)
+    private static void Render(TodoItem item, bool noStatus)
     {
-        Console.WriteLine(item);
+        Console.WriteLine(item.ToString(noStatus));
     }
 
     private static void RenderBullet(TodoItem item)
