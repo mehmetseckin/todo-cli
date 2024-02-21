@@ -25,7 +25,7 @@ stages:
 - stage: 'Release'
   variables:
     artifactsDirectory: '$(Pipeline.Workspace)/artifacts'
-    win10_x64_artifactPath: '$(artifactsDirectory)/todo.$(build.buildNumber).win-x64'
+    win_x64_artifactPath: '$(artifactsDirectory)/todo.$(build.buildNumber).win-x64'
     linux_x64_artifactPath: '$(artifactsDirectory)/todo.$(build.buildNumber).linux-x64'
     osx_x64_artifactPath: '$(artifactsDirectory)/todo.$(build.buildNumber).osx-x64'
   dependsOn: ['win_x64', 'linux_x64', 'osx_x64']
@@ -43,7 +43,7 @@ stages:
       inputs:
         rootFolderOrFile: '$(win_x64_artifactPath)' 
         includeRootFolder: false 
-        archiveFile: '$(win10_x64_artifactPath).zip' 
+        archiveFile: '$(win_x64_artifactPath).zip' 
     - task: ArchiveFiles@2
       displayName: 'Create $(linux_x64_artifactPath).tar.gz'
       inputs:
