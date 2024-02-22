@@ -1,7 +1,6 @@
 ﻿namespace Todo.CLI.Handlers;
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Core.Model;
@@ -13,12 +12,12 @@ public class ListCommandHandler
     private const char TodoBullet = '-';
     private const char CompletedBullet = '\u2713'; // Sqrt - check mark
 
-    public static Func<bool, bool, string, Task> Create(IServiceProvider serviceProvider)
+    public static Func<bool, bool, DateTime?, string, Task> Create(IServiceProvider serviceProvider)
     {
-        return (all, noStatus, listName) => Execute(serviceProvider, all, noStatus, listName);
+        return (all, noStatus, olderThan, listName) => Execute(serviceProvider, all, noStatus, olderThan, listName);
     }
 
-    private static async Task Execute(IServiceProvider sp, bool all, bool noStatus, string listName)
+    private static async Task Execute(IServiceProvider sp, bool all, bool noStatus, DateTime? olderThan, string listName)
     {
         if (!string.IsNullOrWhiteSpace(listName))
         {
@@ -29,15 +28,21 @@ public class ListCommandHandler
             else
             {
                 var itemRepo = sp.GetRequiredService<ITodoItemRepository>();
-                list.Tasks = (await itemRepo.ListByListIdAsync(list.Id, all)).ToList();
-                Render(list);
+                var tasksCall = await itemRepo.ListByListIdAsync(list.Id, all);
+                if(olderThan.HasValue)
+                    tasksCall = tasksCall.Where(item => item.IsCompleted && item.Completed < olderThan);
+                list.Tasks = tasksCall.ToList();
+                Render(list, noStatus);
             }
 
             return;
         }
 
         var taskRepo = sp.GetRequiredService<ITodoItemRepository>();
-        await foreach (var item in taskRepo.EnumerateAllAsync(all))
+        var tasks = taskRepo.EnumerateAllAsync(all).ToBlockingEnumerable();
+        if (olderThan.HasValue)
+            tasks = tasks.Where(item => item.IsCompleted && item.Completed < olderThan);
+        foreach (var item in tasks)
         {
             if (!noStatus)
             {
@@ -49,10 +54,10 @@ public class ListCommandHandler
         }
     }
 
-    private static void Render(TodoList list)
+    private static void Render(TodoList list, bool noStatus)
     {
         Console.WriteLine($"{list.Name} ({list.Count}):");
-        foreach (var item in list.Tasks) Render(item);
+        foreach (var item in list.Tasks) Render(item, noStatus);
     }
 
     private static void Render(TodoItem item, bool noStatus)

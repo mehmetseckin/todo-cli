@@ -15,9 +15,9 @@ public class RemoveCommandHandler
     private const string PromptMessage = "Which item(s) would you like to delete?";
     private const string UIHelpMessage = "Use arrow keys to navigate between options. [SPACEBAR] to mark the options, and [ENTER] to confirm your input.";
 
-    public static Func<string, Task<int>> Create(IServiceProvider serviceProvider)
+    public static Func<string, DateTime?, Task<int>> Create(IServiceProvider serviceProvider)
     {
-        return async listName =>
+        return async (listName, olderThan) =>
         {
             var todoItemRepository = serviceProvider.GetRequiredService<ITodoItemRepository>();
 
@@ -25,6 +25,15 @@ public class RemoveCommandHandler
             var items = (string.IsNullOrEmpty(listName)
                 ? await todoItemRepository.ListAllAsync(includeCompleted: true)
                 : await todoItemRepository.ListByListNameAsync(listName, includeCompleted: true)).ToList();
+
+            if (olderThan.HasValue)
+            {
+                items = items.Where(item =>
+                    item.IsCompleted && item.Completed.HasValue && 
+                    item.Completed.Value < olderThan.Value
+                    )
+                    .ToList();
+            }
 
             // Ask user which item to delete
             var message = PromptMessage
