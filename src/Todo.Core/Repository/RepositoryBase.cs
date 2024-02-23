@@ -1,17 +1,13 @@
-﻿using Microsoft.Graph;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace Todo.Core.Repository;
 
-namespace Todo.Core.Repository
+using Microsoft.Kiota.Abstractions.Authentication;
+
+public abstract class RepositoryBase
 {
-    public abstract class RepositoryBase
-    {
-        protected IAuthenticationProvider AuthenticationProvider { get; }
+    protected IAuthenticationProvider AuthenticationProvider { get; }
 
-        public RepositoryBase(IAuthenticationProvider authenticationProvider)
-        {
-            AuthenticationProvider = authenticationProvider;
-        }
+    protected RepositoryBase(IAuthenticationProvider authenticationProvider)
+    {
+        AuthenticationProvider = authenticationProvider;
     }
 }

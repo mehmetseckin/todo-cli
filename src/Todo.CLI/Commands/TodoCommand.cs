@@ -1,38 +1,27 @@
-﻿using Todo.CLI.Handlers;
-using System;
+﻿using System;
 using System.CommandLine;
-using System.CommandLine.Invocation;
-using System.IO;
-using System.Reflection;
 
-namespace Todo.CLI.Commands
+namespace Todo.CLI.Commands;
+
+public class TodoCommand : RootCommand
 {
-    public class TodoCommand : RootCommand
+    private static readonly Option<bool> Version = new(["-v", "--version"], "Prints out the todo CLI version.");
+    public TodoCommand(IServiceProvider serviceProvider)
     {
-        public TodoCommand(IServiceProvider serviceProvider)
-        {
-            // Add static parameters
-            Description = "A CLI to manage Microsoft to do items.";
-            
-            // Add options
-            AddOption(GetVersionOption());
-            
-            // Add handlers
-            Handler = TodoCommandHandler.Create();
+        // Add static parameters
+        Description = "A CLI to manage Microsoft to do items.";
 
-            // Add subcommands
-            AddCommand(new AddCommand(serviceProvider));
-            AddCommand(new ListCommand(serviceProvider));
-            AddCommand(new CompleteCommand(serviceProvider));
-            AddCommand(new RemoveCommand(serviceProvider));
-        }
+        // Add back when https://github.com/dotnet/command-line-api/issues/1691 is resolved.
+        //// Add options
+        //Add(Version);
 
-        private Option GetVersionOption()
-        {
-            return new Option(new string[] { "-v", "--version" }, "Prints out the todo CLI version.")
-            {
-                Argument = new Argument<bool>()
-            };
-        }
+        //// Add handlers
+        //this.SetHandler(TodoCommandHandler.Create(), Version);
+
+        // Add subcommands
+        Add(new AddCommand(serviceProvider));
+        Add(new ListCommand(serviceProvider));
+        Add(new CompleteCommand(serviceProvider));
+        Add(new RemoveCommand(serviceProvider));
     }
 }

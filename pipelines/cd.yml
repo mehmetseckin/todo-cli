@@ -9,8 +9,8 @@ trigger:
 stages:
 - template: templates/stages/build.yml
   parameters:
-    name: 'win10_x64'
-    runtimeIdentifier: 'win10-x64'
+    name: 'win_x64'
+    runtimeIdentifier: 'win-x64'
     vmImage: 'windows-latest'
 - template: templates/stages/build.yml
   parameters:
@@ -27,10 +27,10 @@ stages:
     vmImage: 'ubuntu-latest'
   variables:
     artifactsDirectory: '$(Pipeline.Workspace)/artifacts'
-    win10_x64_artifactPath: '$(artifactsDirectory)/todo.$(build.buildNumber).win10-x64'
+    win_x64_artifactPath: '$(artifactsDirectory)/todo.$(build.buildNumber).win-x64'
     linux_x64_artifactPath: '$(artifactsDirectory)/todo.$(build.buildNumber).linux-x64'
     osx_x64_artifactPath: '$(artifactsDirectory)/todo.$(build.buildNumber).osx-x64'
-  dependsOn: ['win10_x64', 'linux_x64', 'osx_x64']
+  dependsOn: ['win_x64', 'linux_x64', 'osx_x64']
   jobs:
   - job: 'release_job'
     steps:
@@ -41,11 +41,11 @@ stages:
       inputs:
         targetPath: '$(artifactsDirectory)'
     - task: ArchiveFiles@2
-      displayName: 'Create $(win10_x64_artifactPath).zip'
+      displayName: 'Create $(win_x64_artifactPath).zip'
       inputs:
-        rootFolderOrFile: '$(win10_x64_artifactPath)' 
+        rootFolderOrFile: '$(win_x64_artifactPath)' 
         includeRootFolder: false 
-        archiveFile: '$(win10_x64_artifactPath).zip' 
+        archiveFile: '$(win_x64_artifactPath).zip' 
     - task: ArchiveFiles@2
       displayName: 'Create $(linux_x64_artifactPath).tar.gz'
       inputs:
