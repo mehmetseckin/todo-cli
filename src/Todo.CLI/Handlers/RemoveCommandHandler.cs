@@ -15,9 +15,9 @@ public class RemoveCommandHandler
     private const string PromptMessage = "Which item(s) would you like to delete?";
     private const string UIHelpMessage = "Use arrow keys to navigate between options. [SPACEBAR] to mark the options, and [ENTER] to confirm your input.";
 
-    public static Func<string, DateTime?, Task<int>> Create(IServiceProvider serviceProvider)
+    public static Func<string, DateTime?, bool, Task<int>> Create(IServiceProvider serviceProvider)
     {
-        return async (listName, olderThan) =>
+        return async (listName, olderThan, removeAll) =>
         {
             var todoItemRepository = serviceProvider.GetRequiredService<ITodoItemRepository>();
 
@@ -35,44 +35,100 @@ public class RemoveCommandHandler
                     .ToList();
             }
 
-            // Ask user which item to delete
-            var message = PromptMessage
-                          + Environment.NewLine
-                          + Environment.NewLine
-                          + UIHelpMessage;
-
-            try
+            if (items.Count == 0)
             {
-                var selectedItems = Question
-                    .Checkbox(message, items)
-                    .Prompt();
-
-                DeleteItems(todoItemRepository, selectedItems);
+                Console.WriteLine("No items found.");
                 return 0;
             }
-            catch (ArgumentOutOfRangeException exc)
-            {
-                if (exc.ParamName == "top" &&
-                    exc.Message.Contains(
-                        "The value must be greater than or equal to zero and less than the console's buffer size in that dimension.",
-                        StringComparison.Ordinal))
-                {
-                    Console.Clear();
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    await Console.Error.WriteLineAsync(
-                        $"Too many tasks ({items.Count}) to display on the current console. Filter tasks by passing a specific list using the --list parameter, or increase buffer size of the console.");
-                    Console.ResetColor();
-                    return 1;
-                }
 
-                throw;
-            }
+            return !removeAll
+                ?await RemoveSpecificItems(items, todoItemRepository)
+                : await RemoveAllItems(items, todoItemRepository);
         };
     }
 
-    private static void DeleteItems(ITodoItemRepository todoItemRepository, IEnumerable<TodoItem> selectedItems)
+    private static async Task<int> RemoveSpecificItems(List<TodoItem> items, ITodoItemRepository todoItemRepository)
     {
-        Task.WaitAll(selectedItems.Select(todoItemRepository.DeleteAsync).ToArray());
+        // Ask user which item to delete
+        var message = PromptMessage
+                      + Environment.NewLine
+                      + Environment.NewLine
+                      + UIHelpMessage;
+
+        try
+        {
+            var selectedItems = Question
+                .Checkbox(message, items)
+                .Prompt();
+
+            await DeleteItems(todoItemRepository, selectedItems);
+            return 0;
+        }
+        catch (ArgumentOutOfRangeException exc)
+        {
+            if (exc.ParamName == "top" &&
+                exc.Message.Contains(
+                    "The value must be greater than or equal to zero and less than the console's buffer size in that dimension.",
+                    StringComparison.Ordinal))
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Red;
+                await Console.Error.WriteLineAsync(
+                    $"Too many tasks ({items.Count}) to display on the current console. Filter tasks by passing a specific list using the --list parameter, or increase buffer size of the console.");
+                Console.ResetColor();
+                return 1;
+            }
+
+            throw;
+        }
+    }
+
+    private static async Task<int> RemoveAllItems(List<TodoItem> items, ITodoItemRepository todoItemRepository)
+    {
+        var message = items.Count < 50
+            ? "Are you sure you want to delete all items?" + Environment.NewLine +
+              string.Join(Environment.NewLine, items)
+            : $"Are you sure you want to delete all {items.Count} items?";
+
+        if (Question.Confirm(message).Prompt())
+        {
+            await DeleteItems(todoItemRepository, items);
+            return 0;
+        }
+
+        Console.Clear();
+        return 0;
+    }
+
+    private static async Task DeleteItems(ITodoItemRepository todoItemRepository, IEnumerable<TodoItem> selectedItems)
+    {
+        var items = selectedItems.ToList();
+        var done = false;
+        do
+        {
+            try
+            {
+                await Task.WhenAll(items.Select(async item =>
+                {
+                    await todoItemRepository.DeleteAsync(item);
+                    items.Remove(item);
+                }).ToArray());
+                done = true;
+            }
+            catch (AggregateException agg)
+            {
+                var exc = agg.InnerExceptions.First();
+                if(exc.Message.Contains("Too many retries performed"))
+                {
+                    await Console.Out.WriteLineAsync($"Too many requests, rate limit hit, {items.Count} left, waiting a second and trying again...");
+                    await Task.Delay(1000);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        } while (!done);
         Console.Clear();
     }
 }
