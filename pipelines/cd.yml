@@ -23,6 +23,8 @@ stages:
     runtimeIdentifier: 'osx-x64'
     vmImage: 'ubuntu-latest'
 - stage: 'Release'
+  pool:
+    vmImage: 'ubuntu-latest'
   variables:
     artifactsDirectory: '$(Pipeline.Workspace)/artifacts'
     win_x64_artifactPath: '$(artifactsDirectory)/todo.$(build.buildNumber).win-x64'
