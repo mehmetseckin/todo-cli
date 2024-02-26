@@ -100,9 +100,17 @@ internal class TodoItemRepository : RepositoryBase, ITodoItemRepository
         ArgumentException.ThrowIfNullOrEmpty(listId);
 
         var graphServiceClient = new GraphServiceClient(AuthenticationProvider);
-        IEnumerable<TodoTask>? tasks = (await graphServiceClient.Me.Todo.Lists[listId].Tasks.GetAsync())?.Value;
+        var todoTaskCollectionResponse = (await graphServiceClient.Me.Todo.Lists[listId].Tasks.GetAsync());
+        IEnumerable<TodoTask>? tasks = todoTaskCollectionResponse?.Value;
         if (tasks is null)
             return new List<TodoItem>(0);
+
+        // if there are more pages, get them
+        while (todoTaskCollectionResponse?.OdataNextLink != null)
+        {
+            todoTaskCollectionResponse = await graphServiceClient.Me.Todo.Lists[listId].Tasks.WithUrl(todoTaskCollectionResponse.OdataNextLink).GetAsync();
+            tasks = tasks.Concat(todoTaskCollectionResponse?.Value!);
+        }
 
         if (!includeCompleted)
         {
