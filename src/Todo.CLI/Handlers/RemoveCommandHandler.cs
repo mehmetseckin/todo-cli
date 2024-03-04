@@ -59,6 +59,7 @@ public class RemoveCommandHandler
         {
             var selectedItems = Question
                 .Checkbox(message, items)
+                .Page(50)
                 .Prompt();
 
             await DeleteItems(todoItemRepository, selectedItems);

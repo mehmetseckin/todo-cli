@@ -48,6 +48,7 @@ public class CompleteCommandHandler
 
                     var selectedItems = Question
                         .Checkbox(message, items)
+                        .Page(50)
                         .Prompt();
 
                     CompleteItems(todoItemRepository, selectedItems);
