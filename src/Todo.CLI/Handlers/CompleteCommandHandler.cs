@@ -1,80 +1,48 @@
-﻿using InquirerCS;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Todo.Core.Model;
+using Todo.Core.Repository;
+using Todo.CLI.UI;
 
 namespace Todo.CLI.Handlers;
 
-using Core.Repository;
-using Microsoft.Extensions.DependencyInjection;
-
 public class CompleteCommandHandler
 {
-    private const string PromptMessage = "Which item(s) would you like to delete?";
-    private const string UIHelpMessage = "Use arrow keys to navigate between options. [SPACEBAR] to mark the options, and [ENTER] to confirm your input.";
-
-    public static Func<string, string, Task<int>> Create(IServiceProvider serviceProvider)
+    public static Func<string, Task<int>> Create(IServiceProvider serviceProvider)
     {
-        return async (itemName, listName) =>
+        return async id =>
         {
+            var userInteraction = serviceProvider.GetRequiredService<IUserInteraction>();
+            
+            if (string.IsNullOrEmpty(id))
+            {
+                userInteraction.ShowError("Please provide an item ID to complete.");
+                return 1;
+            }
+
             try
             {
                 var todoItemRepository = serviceProvider.GetRequiredService<ITodoItemRepository>();
-                var items = string.IsNullOrEmpty(listName)
-                    ? await todoItemRepository.ListAllAsync(false)
-                    : await todoItemRepository.ListByListNameAsync(listName, false);
-
-                if (!string.IsNullOrEmpty(itemName))
+                
+                var items = await todoItemRepository.ListAllAsync(false);
+                var item = items.FirstOrDefault(i => i.Id == id);
+                if (item == null)
                 {
-                    var item = items.FirstOrDefault(i => i.Subject == itemName);
-                    if (item is null)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        await Console.Error.WriteLineAsync($"Item called \"{itemName}\" not found.");
-                        Console.ResetColor();
-                        return 1;
-                    }
-                    await todoItemRepository.CompleteAsync(item);
-                }
-                else
-                {
-                    // Ask user which items to complete
-                    var message = PromptMessage
-                                  + Environment.NewLine
-                                  + Environment.NewLine
-                                  + UIHelpMessage;
-
-                    var selectedItems = Question
-                        .Checkbox(message, items)
-                        .Page(50)
-                        .Prompt();
-
-                    CompleteItems(todoItemRepository, selectedItems);
-                }
-
-                Console.Clear();
-                return 0;
-            }
-            catch (ArgumentOutOfRangeException exc)
-            {
-                if (exc.ParamName == "top" && exc.Message.Contains("The value must be greater than or equal to zero and less than the console's buffer size in that dimension.", StringComparison.Ordinal))
-                {
-                    Console.Clear();
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    await Console.Error.WriteLineAsync("Too many tasks to display on the current console. Filter tasks by passing a specific list using the --list parameter, or increase buffer size of the console.");
-                    Console.ResetColor();
+                    userInteraction.ShowError($"Item with ID {id} not found.");
                     return 1;
                 }
-
-                throw;
+                
+                await todoItemRepository.CompleteAsync(item);
+                Console.WriteLine($"Item {id} marked as complete.");
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                userInteraction.ShowError($"Error completing item: {ex.Message}");
+                return 1;
             }
         };
-    }
-
-    private static void CompleteItems(ITodoItemRepository todoItemRepository, IEnumerable<TodoItem> selectedItems)
-    {
-        Task.WaitAll(selectedItems.Select(todoItemRepository.CompleteAsync).ToArray());
     }
 }
