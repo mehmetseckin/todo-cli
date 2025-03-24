@@ -15,6 +15,7 @@
     <Version>0.2.0</Version>
     <AssemblyName>todo</AssemblyName>
     <NoWin32Manifest>true</NoWin32Manifest>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Todo.CLI.Auth;
 
@@ -19,11 +20,36 @@ static class TodoCliAuthenticationProviderFactory
 
         TokenCacheHelper.EnableSerialization(app.UserTokenCache);
 
-        var login = app.AcquireTokenInteractive(config.Scopes).WithPrompt(Prompt.NoPrompt).ExecuteAsync()
-            .GetAwaiter().GetResult();
-        var token = login.AccessToken;
+        // Try to get token silently from cache first
+        var accounts = app.GetAccountsAsync().GetAwaiter().GetResult();
+        AuthenticationResult? result = null;
 
-        return new ApiKeyAuthenticationProvider("Bearer " + token, "Authorization",
+        if (accounts.Any())
+        {
+            try
+            {
+                result = app.AcquireTokenSilent(config.Scopes, accounts.First())
+                    .ExecuteAsync()
+                    .GetAwaiter()
+                    .GetResult();
+            }
+            catch (MsalUiRequiredException)
+            {
+                // Token expired or invalid, will fall through to interactive login
+            }
+        }
+
+        // If silent acquisition failed or no accounts found, do interactive login
+        if (result == null)
+        {
+            result = app.AcquireTokenInteractive(config.Scopes)
+                .WithPrompt(Prompt.NoPrompt)
+                .ExecuteAsync()
+                .GetAwaiter()
+                .GetResult();
+        }
+
+        return new ApiKeyAuthenticationProvider("Bearer " + result.AccessToken, "Authorization",
             ApiKeyAuthenticationProvider.KeyLocation.Header);
     }
 }
