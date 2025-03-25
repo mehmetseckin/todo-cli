@@ -57,13 +57,6 @@ stages:
       displayName: 'Publish as self-contained executable for ${{ parameters.runtimeIdentifier }}'
       condition: ne('${{ parameters.vmImage }}', 'windows-latest')
 
-    - task: CopyFiles@2
-      inputs:
-        sourceFolder: '$(projectDirectory)'
-        contents: 'appsettings.json'
-        targetFolder: '$(outputDirectory)'
-      displayName: 'Copy appsettings.json to output'
-
     - publish: '$(outputDirectory)'
       displayName: 'Publish artifact for ${{ parameters.runtimeIdentifier }}'
       artifact: '$(artifactName)'
