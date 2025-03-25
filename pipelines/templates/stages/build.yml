@@ -57,14 +57,7 @@ stages:
           /p:EnableCompressionInSingleFile=true \
           /p:DebugType=embedded \
           --self-contained true
-        dotnet msbuild "$(projectDirectory)" \
-          -t:BundleApp \
-          -p:RuntimeIdentifier=${{ parameters.runtimeIdentifier }} \
-          -p:Configuration=$(buildConfiguration) \
-          -p:PublishDir="$(outputDirectory)" \
-          -p:CFBundleShortVersionString=$(Build.BuildNumber) \
-          -p:CFBundleVersion=$(Build.BuildNumber)
-      displayName: 'Publish as macOS app bundle'
+      displayName: 'Publish as self-contained executable for macOS'
       condition: or(eq('${{ parameters.runtimeIdentifier }}', 'osx-x64'), eq('${{ parameters.runtimeIdentifier }}', 'osx-arm64'))
 
     # Linux Build
