@@ -11,7 +11,7 @@ using Todo.CLI;
 using Todo.Core.Repository;
 
 var config = new ConfigurationBuilder()
-    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+    .AddJsonFile("./appsettings.json", optional: true, reloadOnChange: true)
     .Build();
 
 var todoCliConfig = new TodoCliConfiguration();

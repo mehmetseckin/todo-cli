@@ -10,8 +10,8 @@ stages:
   variables:
     buildConfiguration: 'Release'
     solutionFile: $(Build.SourcesDirectory)/src/Todo.CLI.sln
-    projectDirectory: $(Build.SourcesDirectory)/src/Todo.CLI/
-    outputDirectory: $(Build.ArtifactStagingDirectory)/${{ parameters.runtimeIdentifier }}/
+    projectDirectory: $(Build.SourcesDirectory)/src/Todo.CLI
+    outputDirectory: $(Build.ArtifactStagingDirectory)/${{ parameters.runtimeIdentifier }}
     artifactName: 'todo.$(Build.BuildNumber).${{ parameters.runtimeIdentifier }}'
 
   dependsOn: ${{ parameters.dependsOn }}
@@ -26,11 +26,27 @@ stages:
         includePreviewVersions: false
 
     - script: |
-        dotnet restore $(projectDirectory)
-        dotnet publish $(projectDirectory) \
+        dotnet restore "$(projectDirectory)"
+        dotnet publish "$(projectDirectory)" ^
+          -c $(buildConfiguration) ^
+          -r ${{ parameters.runtimeIdentifier }} ^
+          -o "$(outputDirectory)" ^
+          /p:Version=$(Build.BuildNumber) ^
+          /p:PublishSingleFile=true ^
+          /p:PublishTrimmed=true ^
+          /p:IncludeNativeLibrariesForSelfExtract=true ^
+          /p:EnableCompressionInSingleFile=true ^
+          /p:DebugType=embedded ^
+          --self-contained true
+      displayName: 'Publish as self-contained executable for ${{ parameters.runtimeIdentifier }}'
+      condition: eq('${{ parameters.vmImage }}', 'windows-latest')
+
+    - script: |
+        dotnet restore "$(projectDirectory)"
+        dotnet publish "$(projectDirectory)" \
           -c $(buildConfiguration) \
           -r ${{ parameters.runtimeIdentifier }} \
-          -o $(outputDirectory) \
+          -o "$(outputDirectory)" \
           /p:Version=$(Build.BuildNumber) \
           /p:PublishSingleFile=true \
           /p:PublishTrimmed=true \
@@ -39,6 +55,7 @@ stages:
           /p:DebugType=embedded \
           --self-contained true
       displayName: 'Publish as self-contained executable for ${{ parameters.runtimeIdentifier }}'
+      condition: ne('${{ parameters.vmImage }}', 'windows-latest')
 
     - task: CopyFiles@2
       inputs:
