@@ -10,4 +10,5 @@ public interface IUserInteraction
     void ShowError(string message);
     void ShowSuccess(string message);
     void ClearScreen();
+    IOutputFormatter OutputFormatter { get; }
 } 

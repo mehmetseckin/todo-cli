@@ -12,7 +12,11 @@ var services = new ServiceCollection()
     .AddSingleton<TodoCliConfiguration>()
     .AddSingleton(TodoCliAuthenticationProviderFactory.GetAuthenticationProvider)
     .AddTodoRepositories()
-    .AddSingleton<IUserInteraction, InquirerUserInteraction>();
+    .AddSingleton<IUserInteraction>(sp => 
+    {
+        var outputFormat = sp.GetRequiredService<OutputFormat>();
+        return new InquirerUserInteraction(outputFormat);
+    });
 
 var serviceProvider = services.BuildServiceProvider();
 

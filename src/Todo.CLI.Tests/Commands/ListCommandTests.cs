@@ -17,15 +17,20 @@ public class ListCommandTests
 {
     private readonly Mock<ITodoItemRepository> _mockItemRepository;
     private readonly Mock<ITodoListRepository> _mockListRepository;
+    private readonly Mock<IUserInteraction> _mockUserInteraction;
     private readonly IServiceProvider _serviceProvider;
 
     public ListCommandTests()
     {
         _mockItemRepository = new Mock<ITodoItemRepository>();
         _mockListRepository = new Mock<ITodoListRepository>();
+        _mockUserInteraction = new Mock<IUserInteraction>();
+        _mockUserInteraction.Setup(x => x.OutputFormatter).Returns(new InteractiveOutputFormatter());
+
         var services = new ServiceCollection();
         services.AddSingleton(_mockItemRepository.Object);
         services.AddSingleton(_mockListRepository.Object);
+        services.AddSingleton<IUserInteraction>(_mockUserInteraction.Object);
         _serviceProvider = services.BuildServiceProvider();
     }
 

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Core.Model;
 using Core.Repository;
 using Microsoft.Extensions.DependencyInjection;
+using Todo.CLI.UI;
 
 public class ListCommandHandler
 {
@@ -19,12 +20,17 @@ public class ListCommandHandler
 
     private static async Task Execute(IServiceProvider sp, bool all, bool noStatus, DateTime? olderThan, string listName)
     {
+        var userInteraction = sp.GetRequiredService<IUserInteraction>();
+        var outputFormatter = userInteraction.OutputFormatter;
+
         if (!string.IsNullOrWhiteSpace(listName))
         {
             var listRepo = sp.GetRequiredService<ITodoListRepository>();
             var list = await listRepo.GetByNameAsync(listName);
             if (list?.Id is null)
-                Console.WriteLine($"No list found with the name '{listName}'.");
+            {
+                outputFormatter.FormatError($"No list found with the name '{listName}'.");
+            }
             else
             {
                 var itemRepo = sp.GetRequiredService<ITodoItemRepository>();
@@ -32,9 +38,8 @@ public class ListCommandHandler
                 if(olderThan.HasValue)
                     tasksCall = tasksCall.Where(item => item.IsCompleted && item.Completed < olderThan);
                 list.Tasks = tasksCall.ToList();
-                Render(list, noStatus);
+                outputFormatter.FormatList(list, noStatus);
             }
-
             return;
         }
 
@@ -42,16 +47,7 @@ public class ListCommandHandler
         var tasks = taskRepo.EnumerateAllAsync(all).ToBlockingEnumerable();
         if (olderThan.HasValue)
             tasks = tasks.Where(item => item.IsCompleted && item.Completed < olderThan);
-        foreach (var item in tasks)
-        {
-            if (!noStatus)
-            {
-                RenderBullet(item);
-                Console.Write(" ");
-            }
-
-            Render(item, noStatus);
-        }
+        outputFormatter.FormatItems(tasks, noStatus);
     }
 
     private static void Render(TodoList list, bool noStatus)
