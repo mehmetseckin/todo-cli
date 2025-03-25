@@ -21,7 +21,24 @@ steps:
 
 - script: |
     dotnet restore $(solutionFile)
+  displayName: 'Restore dependencies'
+
+- script: |
     dotnet build $(solutionFile) --configuration $(buildConfiguration) /p:Version=$(Build.BuildNumber)
-    dotnet test $(solutionFile) --configuration $(buildConfiguration) --no-build
-  displayName: 'Build and test solution'
+  displayName: 'Build solution'
+
+- script: |
+    dotnet test $(solutionFile) \
+      --configuration $(buildConfiguration) \
+      --no-build \
+      --logger trx \
+      --results-directory "$(Agent.TempDirectory)/TestResults"
+  displayName: 'Run unit tests'
+
+- task: PublishTestResults@2
+  condition: succeededOrFailed()
+  inputs:
+    testRunner: VSTest
+    testResultsFiles: '$(Agent.TempDirectory)/TestResults/*.trx'
+    testRunTitle: 'Unit Tests - CI Build'
   
