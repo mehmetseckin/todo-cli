@@ -68,12 +68,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  
-  <ItemGroup>
     <RuntimeHostConfigurationOption Include="System.Globalization.Invariant" Value="true" />
   </ItemGroup>
   
@@ -89,6 +83,45 @@
     <CFBundleExecutable>todo</CFBundleExecutable>
     <CFBundleIconFile>logo.icns</CFBundleIconFile>
     <NSHighResolutionCapable>true</NSHighResolutionCapable>
+    <CreatePackage>true</CreatePackage>
+    <EnablePackageSigning>false</EnablePackageSigning>
+    <EnableCodeSigning>false</EnableCodeSigning>
+    <EnableHardenedRuntime>false</EnableHardenedRuntime>
+    <EnableAppSandbox>false</EnableAppSandbox>
+    <UseAppHost>true</UseAppHost>
   </PropertyGroup>
+  
+  <!-- macOS Bundle Resources -->
+  <ItemGroup Condition="'$(RuntimeIdentifier)' == 'osx-x64' Or '$(RuntimeIdentifier)' == 'osx-arm64'">
+    <BundleResource Include="../../assets/logo.icns">
+      <LogicalName>Resources/logo.icns</LogicalName>
+    </BundleResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Update="../../assets/logo.icns">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  
+  <!-- macOS Bundle Creation -->
+  <Target Name="CreateAppBundle" AfterTargets="BundleApp" Condition="'$(RuntimeIdentifier)' == 'osx-x64' Or '$(RuntimeIdentifier)' == 'osx-arm64'">
+    <PropertyGroup>
+      <AppBundleName>Todo CLI.app</AppBundleName>
+      <AppBundleDir>$(PublishDir)/$(AppBundleName)</AppBundleDir>
+      <AppResourcesDir>$(AppBundleDir)/Contents/Resources</AppResourcesDir>
+      <AppContentsDir>$(AppBundleDir)/Contents</AppContentsDir>
+      <AppMacOSDir>$(AppContentsDir)/MacOS</AppMacOSDir>
+    </PropertyGroup>
+    <MakeDir Directories="$(AppBundleDir);$(AppContentsDir);$(AppResourcesDir);$(AppMacOSDir)" />
+    <Copy SourceFiles="../../assets/logo.icns" DestinationFolder="$(AppResourcesDir)" />
+    <Copy SourceFiles="$(PublishDir)/todo" DestinationFolder="$(AppMacOSDir)" />
+  </Target>
   
 </Project>
