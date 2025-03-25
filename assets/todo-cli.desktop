@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Todo CLI
+Comment=A CLI to manage Microsoft to do items
+Exec=todo
+Icon=todo-cli
+Terminal=true
+Categories=Utility;
+Keywords=todo;microsoft;cli; 

@@ -25,6 +25,7 @@ stages:
         version: '8.0.x'
         includePreviewVersions: false
 
+    # Windows Build
     - script: |
         dotnet restore "$(projectDirectory)"
         dotnet publish "$(projectDirectory)" ^
@@ -38,9 +39,10 @@ stages:
           /p:EnableCompressionInSingleFile=true ^
           /p:DebugType=embedded ^
           --self-contained true
-      displayName: 'Publish as self-contained executable for ${{ parameters.runtimeIdentifier }}'
-      condition: eq('${{ parameters.vmImage }}', 'windows-latest')
+      displayName: 'Publish as self-contained executable for Windows'
+      condition: eq('${{ parameters.runtimeIdentifier }}', 'win-x64')
 
+    # macOS Build
     - script: |
         dotnet restore "$(projectDirectory)"
         dotnet publish "$(projectDirectory)" \
@@ -54,8 +56,34 @@ stages:
           /p:EnableCompressionInSingleFile=true \
           /p:DebugType=embedded \
           --self-contained true
-      displayName: 'Publish as self-contained executable for ${{ parameters.runtimeIdentifier }}'
-      condition: ne('${{ parameters.vmImage }}', 'windows-latest')
+        dotnet msbuild "$(projectDirectory)" \
+          -t:BundleApp \
+          -p:RuntimeIdentifier=${{ parameters.runtimeIdentifier }} \
+          -p:Configuration=$(buildConfiguration) \
+          -p:PublishDir="$(outputDirectory)"
+      displayName: 'Publish as macOS app bundle'
+      condition: or(eq('${{ parameters.runtimeIdentifier }}', 'osx-x64'), eq('${{ parameters.runtimeIdentifier }}', 'osx-arm64'))
+
+    # Linux Build
+    - script: |
+        dotnet restore "$(projectDirectory)"
+        dotnet publish "$(projectDirectory)" \
+          -c $(buildConfiguration) \
+          -r ${{ parameters.runtimeIdentifier }} \
+          -o "$(outputDirectory)" \
+          /p:Version=$(Build.BuildNumber) \
+          /p:PublishSingleFile=true \
+          /p:PublishTrimmed=true \
+          /p:IncludeNativeLibrariesForSelfExtract=true \
+          /p:EnableCompressionInSingleFile=true \
+          /p:DebugType=embedded \
+          --self-contained true
+        mkdir -p "$(outputDirectory)/usr/share/applications"
+        cp "$(Build.SourcesDirectory)/assets/todo-cli.desktop" "$(outputDirectory)/usr/share/applications/"
+        mkdir -p "$(outputDirectory)/usr/share/icons/hicolor/scalable/apps"
+        cp "$(Build.SourcesDirectory)/assets/logo.png" "$(outputDirectory)/usr/share/icons/hicolor/scalable/apps/todo-cli.png"
+      displayName: 'Publish as Linux executable with desktop integration'
+      condition: eq('${{ parameters.runtimeIdentifier }}', 'linux-x64')
 
     - publish: '$(outputDirectory)'
       displayName: 'Publish artifact for ${{ parameters.runtimeIdentifier }}'

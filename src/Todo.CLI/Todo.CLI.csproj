@@ -60,6 +60,7 @@
     <PackageReference Include="phu.Inquirer.cs" Version="4.1.0" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
     <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
+    <PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
   </ItemGroup>
 
   <ItemGroup>
@@ -75,5 +76,18 @@
   <ItemGroup>
     <RuntimeHostConfigurationOption Include="System.Globalization.Invariant" Value="true" />
   </ItemGroup>
+  
+  <!-- macOS Bundle Configuration -->
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'osx-x64' Or '$(RuntimeIdentifier)' == 'osx-arm64'">
+    <CFBundleName>Todo CLI</CFBundleName>
+    <CFBundleDisplayName>Todo CLI</CFBundleDisplayName>
+    <CFBundleIdentifier>com.mehmetseckin.todo-cli</CFBundleIdentifier>
+    <CFBundleVersion>0.2.0</CFBundleVersion>
+    <CFBundlePackageType>APPL</CFBundlePackageType>
+    <CFBundleSignature>????</CFBundleSignature>
+    <CFBundleExecutable>todo</CFBundleExecutable>
+    <CFBundleIconFile>logo.icns</CFBundleIconFile>
+    <NSHighResolutionCapable>true</NSHighResolutionCapable>
+  </PropertyGroup>
   
 </Project>
