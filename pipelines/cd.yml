@@ -36,7 +36,7 @@ stages:
     linux_x64_artifactPath: '$(artifactsDirectory)/todo.$(build.buildNumber).linux-x64'
     osx_x64_artifactPath: '$(artifactsDirectory)/todo.$(build.buildNumber).osx-x64'
     osx_arm64_artifactPath: '$(artifactsDirectory)/todo.$(build.buildNumber).osx-arm64'
-  dependsOn: ['win_x64', 'linux_x64', 'osx_x64', 'osx_arm64']
+  dependsOn: ['build_win_x64', 'build_linux_x64', 'build_osx_x64', 'build_osx_arm64']
   jobs:
   - job: 'release_job'
     steps:
