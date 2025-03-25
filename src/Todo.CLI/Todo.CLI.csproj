@@ -16,6 +16,7 @@
     <AssemblyName>todo</AssemblyName>
     <NoWin32Manifest>true</NoWin32Manifest>
     <Nullable>enable</Nullable>
+    <ApplicationIcon>../../assets/logo.ico</ApplicationIcon>
   </PropertyGroup>
 
   <!-- Common release settings -->
