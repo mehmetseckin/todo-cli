@@ -11,26 +11,31 @@ static class TokenCacheHelper
         Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
         ".todo-cli"
     );
-    private static readonly string KeyFilePath = Path.Combine(ConfigDir, "key.bin");
     private static readonly string CacheFilePath = Path.Combine(ConfigDir, "token.cache");
     private static readonly object FileLock = new object();
+    private static readonly IKeyStorage KeyStorage = KeyStorageFactory.Create();
+    private static byte[]? _cachedKey;
 
     private static byte[] GetOrCreateKey()
     {
-        if (!Directory.Exists(ConfigDir))
+        if (_cachedKey != null)
         {
-            Directory.CreateDirectory(ConfigDir);
+            return _cachedKey;
         }
 
-        if (File.Exists(KeyFilePath))
+        try
         {
-            return File.ReadAllBytes(KeyFilePath);
+            _cachedKey = KeyStorage.GetKey();
+            return _cachedKey;
         }
-
-        var key = new byte[32];
-        RandomNumberGenerator.Fill(key);
-        File.WriteAllBytes(KeyFilePath, key);
-        return key;
+        catch
+        {
+            var key = new byte[32];
+            RandomNumberGenerator.Fill(key);
+            KeyStorage.SaveKey(key);
+            _cachedKey = key;
+            return key;
+        }
     }
 
     public static void EnableSerialization(ITokenCache tokenCache)
