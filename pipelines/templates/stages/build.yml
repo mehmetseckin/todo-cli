@@ -60,7 +60,9 @@ stages:
           -t:BundleApp \
           -p:RuntimeIdentifier=${{ parameters.runtimeIdentifier }} \
           -p:Configuration=$(buildConfiguration) \
-          -p:PublishDir="$(outputDirectory)"
+          -p:PublishDir="$(outputDirectory)" \
+          -p:CFBundleShortVersionString=$(Build.BuildNumber) \
+          -p:CFBundleVersion=$(Build.BuildNumber)
       displayName: 'Publish as macOS app bundle'
       condition: or(eq('${{ parameters.runtimeIdentifier }}', 'osx-x64'), eq('${{ parameters.runtimeIdentifier }}', 'osx-arm64'))
 

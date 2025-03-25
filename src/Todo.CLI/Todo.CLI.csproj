@@ -83,6 +83,7 @@
     <CFBundleDisplayName>Todo CLI</CFBundleDisplayName>
     <CFBundleIdentifier>com.mehmetseckin.todo-cli</CFBundleIdentifier>
     <CFBundleVersion>0.2.0</CFBundleVersion>
+    <CFBundleShortVersionString>0.2.0</CFBundleShortVersionString>
     <CFBundlePackageType>APPL</CFBundlePackageType>
     <CFBundleSignature>????</CFBundleSignature>
     <CFBundleExecutable>todo</CFBundleExecutable>
