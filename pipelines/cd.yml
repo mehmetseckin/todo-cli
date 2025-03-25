@@ -1,5 +1,5 @@
 variables:
-  version: '0.1.3'
+  version: '0.2.0'
 
 name: $(version)$(rev:.r)
 
@@ -21,7 +21,12 @@ stages:
   parameters:
     name: 'osx_x64'
     runtimeIdentifier: 'osx-x64'
-    vmImage: 'ubuntu-latest'
+    vmImage: 'macos-latest'
+- template: templates/stages/build.yml
+  parameters:
+    name: 'osx_arm64'
+    runtimeIdentifier: 'osx-arm64'
+    vmImage: 'macos-latest'
 - stage: 'Release'
   pool:
     vmImage: 'ubuntu-latest'
@@ -30,11 +35,12 @@ stages:
     win_x64_artifactPath: '$(artifactsDirectory)/todo.$(build.buildNumber).win-x64'
     linux_x64_artifactPath: '$(artifactsDirectory)/todo.$(build.buildNumber).linux-x64'
     osx_x64_artifactPath: '$(artifactsDirectory)/todo.$(build.buildNumber).osx-x64'
-  dependsOn: ['win_x64', 'linux_x64', 'osx_x64']
+    osx_arm64_artifactPath: '$(artifactsDirectory)/todo.$(build.buildNumber).osx-arm64'
+  dependsOn: ['win_x64', 'linux_x64', 'osx_x64', 'osx_arm64']
   jobs:
   - job: 'release_job'
     steps:
-    - script: mkdir $(artifactsDirectory)
+    - script: mkdir -p $(artifactsDirectory)
       displayName: 'Create $(artifactsDirectory) directory'
     - task: DownloadPipelineArtifact@2
       displayName: 'Download all artifacts'
@@ -61,7 +67,15 @@ stages:
         includeRootFolder: false 
         archiveFile: '$(osx_x64_artifactPath).tar.gz' 
         archiveType: 'tar'
-        tarCompression: 'gz'        
+        tarCompression: 'gz'
+    - task: ArchiveFiles@2
+      displayName: 'Create $(osx_arm64_artifactPath).tar.gz'
+      inputs:
+        rootFolderOrFile: '$(osx_arm64_artifactPath)' 
+        includeRootFolder: false 
+        archiveFile: '$(osx_arm64_artifactPath).tar.gz' 
+        archiveType: 'tar'
+        tarCompression: 'gz'
     - task: GitHubRelease@1
       inputs:
         gitHubConnection: 'azure-pipelines-github-release'

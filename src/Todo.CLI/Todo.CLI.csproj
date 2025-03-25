@@ -18,10 +18,33 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <!-- Common release settings -->
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <PublishSingleFile>true</PublishSingleFile>
     <PublishTrimmed>true</PublishTrimmed>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+
+  <!-- Windows x64 Release -->
+  <PropertyGroup Condition="'$(Configuration)|$(RuntimeIdentifier)' == 'Release|win-x64'">
+    <SelfContained>true</SelfContained>
+  </PropertyGroup>
+
+  <!-- macOS x64 Release -->
+  <PropertyGroup Condition="'$(Configuration)|$(RuntimeIdentifier)' == 'Release|osx-x64'">
+    <SelfContained>true</SelfContained>
+  </PropertyGroup>
+
+  <!-- macOS ARM64 Release -->
+  <PropertyGroup Condition="'$(Configuration)|$(RuntimeIdentifier)' == 'Release|osx-arm64'">
+    <SelfContained>true</SelfContained>
+  </PropertyGroup>
+
+  <!-- Linux x64 Release -->
+  <PropertyGroup Condition="'$(Configuration)|$(RuntimeIdentifier)' == 'Release|linux-x64'">
+    <SelfContained>true</SelfContained>
   </PropertyGroup>
   
   <ItemGroup>

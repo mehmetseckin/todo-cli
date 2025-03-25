@@ -1,4 +1,4 @@
-name: 0.1.3$(rev:.r)
+name: 0.2.0$(rev:.r)
 
 trigger:
 - master
@@ -14,6 +14,14 @@ variables:
   solutionFile: $(Build.SourcesDirectory)/src/Todo.CLI.sln
 
 steps:
-- script: dotnet build $(solutionFile) --configuration $(buildConfiguration) /p:Version=$(Build.BuildNumber)
-  displayName: 'Build solution'
+- task: UseDotNet@2
+  inputs:
+    version: '8.0.x'
+    includePreviewVersions: false
+
+- script: |
+    dotnet restore $(solutionFile)
+    dotnet build $(solutionFile) --configuration $(buildConfiguration) /p:Version=$(Build.BuildNumber)
+    dotnet test $(solutionFile) --configuration $(buildConfiguration) --no-build
+  displayName: 'Build and test solution'
   

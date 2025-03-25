@@ -20,8 +20,33 @@ stages:
     pool:
       vmImage: ${{ parameters.vmImage }}
     steps:
-    - script: dotnet publish $(projectDirectory) -c $(buildConfiguration) -r ${{ parameters.runtimeIdentifier }} -o $(outputDirectory) /p:Version=$(Build.BuildNumber) --self-contained true
+    - task: UseDotNet@2
+      inputs:
+        version: '8.0.x'
+        includePreviewVersions: false
+
+    - script: |
+        dotnet restore $(projectDirectory)
+        dotnet publish $(projectDirectory) \
+          -c $(buildConfiguration) \
+          -r ${{ parameters.runtimeIdentifier }} \
+          -o $(outputDirectory) \
+          /p:Version=$(Build.BuildNumber) \
+          /p:PublishSingleFile=true \
+          /p:PublishTrimmed=true \
+          /p:IncludeNativeLibrariesForSelfExtract=true \
+          /p:EnableCompressionInSingleFile=true \
+          /p:DebugType=embedded \
+          --self-contained true
       displayName: 'Publish as self-contained executable for ${{ parameters.runtimeIdentifier }}'
+
+    - task: CopyFiles@2
+      inputs:
+        sourceFolder: '$(projectDirectory)'
+        contents: 'appsettings.json'
+        targetFolder: '$(outputDirectory)'
+      displayName: 'Copy appsettings.json to output'
+
     - publish: '$(outputDirectory)'
-      displayName: 'Publish artefact for ${{ parameters.runtimeIdentifier }}'
+      displayName: 'Publish artifact for ${{ parameters.runtimeIdentifier }}'
       artifact: '$(artifactName)'
