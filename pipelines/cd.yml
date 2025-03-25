@@ -7,26 +7,57 @@ trigger:
 - master
 
 stages:
+- stage: 'test'
+  displayName: 'Run Tests'
+  pool:
+    vmImage: 'ubuntu-latest'
+  variables:
+    buildConfiguration: 'Release'
+    solutionFile: $(Build.SourcesDirectory)/src/Todo.CLI.sln
+  jobs:
+  - job: 'test_job'
+    steps:
+    - task: UseDotNet@2
+      inputs:
+        version: '8.0.x'
+        includePreviewVersions: false
+
+    - script: |
+        dotnet restore "$(solutionFile)"
+        dotnet test "$(solutionFile)" -c $(buildConfiguration) --logger trx --results-directory "$(Agent.TempDirectory)/TestResults"
+      displayName: 'Run unit tests'
+
+    - task: PublishTestResults@2
+      condition: succeededOrFailed()
+      inputs:
+        testRunner: VSTest
+        testResultsFiles: '$(Agent.TempDirectory)/TestResults/*.trx'
+        testRunTitle: 'Unit Tests'
+
 - template: templates/stages/build.yml
   parameters:
     name: 'win_x64'
     runtimeIdentifier: 'win-x64'
     vmImage: 'windows-latest'
+    dependsOn: ['test']
 - template: templates/stages/build.yml
   parameters:
     name: 'linux_x64'
     runtimeIdentifier: 'linux-x64'
     vmImage: 'ubuntu-latest'
+    dependsOn: ['test']
 - template: templates/stages/build.yml
   parameters:
     name: 'osx_x64'
     runtimeIdentifier: 'osx-x64'
     vmImage: 'macos-latest'
+    dependsOn: ['test']
 - template: templates/stages/build.yml
   parameters:
     name: 'osx_arm64'
     runtimeIdentifier: 'osx-arm64'
     vmImage: 'macos-latest'
+    dependsOn: ['test']
 - stage: 'Release'
   pool:
     vmImage: 'ubuntu-latest'

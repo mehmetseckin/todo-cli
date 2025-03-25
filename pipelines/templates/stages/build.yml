@@ -5,37 +5,9 @@ parameters:
   dependsOn: []
 
 stages:
-- stage: 'test_${{ parameters.name }}'
-  displayName: 'Run Tests'
-  variables:
-    buildConfiguration: 'Release'
-    solutionFile: $(Build.SourcesDirectory)/src/Todo.CLI.sln
-
-  jobs:
-  - job: 'test_job'
-    pool:
-      vmImage: ${{ parameters.vmImage }}
-    steps:
-    - task: UseDotNet@2
-      inputs:
-        version: '8.0.x'
-        includePreviewVersions: false
-
-    - script: |
-        dotnet restore "$(solutionFile)"
-        dotnet test "$(solutionFile)" -c $(buildConfiguration) --logger trx --results-directory "$(Agent.TempDirectory)/TestResults"
-      displayName: 'Run unit tests'
-
-    - task: PublishTestResults@2
-      condition: succeededOrFailed()
-      inputs:
-        testRunner: VSTest
-        testResultsFiles: '$(Agent.TempDirectory)/TestResults/*.trx'
-        testRunTitle: 'Unit Tests - ${{ parameters.runtimeIdentifier }}'
-
 - stage: 'build_${{ parameters.name }}'
   displayName: 'Build ${{ parameters.runtimeIdentifier }}'
-  dependsOn: 'test_${{ parameters.name }}'
+  dependsOn: ${{ parameters.dependsOn }}
 
   variables:
     buildConfiguration: 'Release'
