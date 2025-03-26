@@ -15,9 +15,7 @@ A cross-platform command-line interface to interact with Microsoft To Do, built 
 | Platform | Status |
 | ------ | ------------ |
 | CI | [![CI build status](https://dev.azure.com/mtseckin/todo-cli/_apis/build/status/CI)](https://dev.azure.com/mtseckin/todo-cli/_build/latest?definitionId=1) |
-| Windows (x64) | [![Windows (x64) build status](https://dev.azure.com/mtseckin/todo-cli/_apis/build/status/CD?stageName=build_win_x64)](https://dev.azure.com/mtseckin/todo-cli/_build/latest?definitionId=5) |
-| Linux (x64) | [![Linux (x64) build status](https://dev.azure.com/mtseckin/todo-cli/_apis/build/status/CD?stageName=build_linux_x64)](https://dev.azure.com/mtseckin/todo-cli/_build/latest?definitionId=5) |
-| macOS X (x64) | [![macO X (x64) build status](https://dev.azure.com/mtseckin/todo-cli/_apis/build/status/CD?stageName=build_osx_x64)](https://dev.azure.com/mtseckin/todo-cli/_build/latest?definitionId=5) |
+| CD | [![Windows (x64) build status](https://dev.azure.com/mtseckin/todo-cli/_apis/build/status/CD)](https://dev.azure.com/mtseckin/todo-cli/_build/latest?definitionId=5)
 
 ## Getting Started
 
