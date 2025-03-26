@@ -8,7 +8,7 @@ namespace Todo.CLI.Commands;
 public class CompleteCommand : Command
 {
     private static readonly Argument<string[]> IdArg =
-        new("id", "The ID of the todo item to complete.")
+        new("id", "The ID of the todo item(s) to complete.")
         {
             Arity = ArgumentArity.ZeroOrMore
         };

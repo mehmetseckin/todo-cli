@@ -22,7 +22,7 @@ public class RemoveCommandHandler
         _userInteraction = userInteraction;
     }
 
-    public static Func<string, DateTime?, bool, bool, Task<int>> Create(IServiceProvider serviceProvider)
+    public static Func<string[], string, DateTime?, bool, bool, Task<int>> Create(IServiceProvider serviceProvider)
     {
         var todoItemRepository = serviceProvider.GetRequiredService<ITodoItemRepository>();
         var userInteraction = serviceProvider.GetRequiredService<IUserInteraction>();
@@ -30,36 +30,43 @@ public class RemoveCommandHandler
         return handler.HandleAsync;
     }
 
-    private async Task<int> HandleAsync(string listName, DateTime? olderThan, bool removeAll, bool completedOnly)
+    private async Task<int> HandleAsync(string[] ids, string listName, DateTime? olderThan, bool removeAll, bool completedOnly)
     {
-        // Retrieve items
-        var items = (string.IsNullOrEmpty(listName)
-            ? await _todoItemRepository.ListAllAsync(includeCompleted: true)
-            : await _todoItemRepository.ListByListNameAsync(listName, includeCompleted: true)).ToList();
-
-        if (completedOnly)
+        if(ids.Length > 0)
         {
-            items = items.Where(item => item.IsCompleted).ToList();
+            var items = await _todoItemRepository.ListAllAsync(includeCompleted: true);
+            return await RemoveAllItems(items.Where(i => ids.Contains(i.Id)).ToList());
         }
+        else {
+            // Retrieve items
+            var items = (string.IsNullOrEmpty(listName)
+                ? await _todoItemRepository.ListAllAsync(includeCompleted: true)
+                : await _todoItemRepository.ListByListNameAsync(listName, includeCompleted: true)).ToList();
 
-        if (olderThan.HasValue)
-        {
-            items = items.Where(item =>
-                item.IsCompleted && item.Completed.HasValue && 
-                item.Completed.Value < olderThan.Value
-                )
-                .ToList();
+            if (completedOnly)
+            {
+                items = items.Where(item => item.IsCompleted).ToList();
+            }
+
+            if (olderThan.HasValue)
+            {
+                items = items.Where(item =>
+                    item.IsCompleted && item.Completed.HasValue && 
+                    item.Completed.Value < olderThan.Value
+                    )
+                    .ToList();
+            }
+
+            if (items.Count == 0)
+            {
+                _userInteraction.ShowError("No items found.");
+                return 0;
+            }
+
+            return !removeAll
+                ? await RemoveSpecificItems(items)
+                : await RemoveAllItems(items);
         }
-
-        if (items.Count == 0)
-        {
-            _userInteraction.ShowError("No items found.");
-            return 0;
-        }
-
-        return !removeAll
-            ? await RemoveSpecificItems(items)
-            : await RemoveAllItems(items);
     }
 
     private async Task<int> RemoveSpecificItems(List<TodoItem> items)
@@ -105,7 +112,6 @@ public class RemoveCommandHandler
             return 0;
         }
 
-        _userInteraction.ClearScreen();
         return 0;
     }
 
@@ -113,6 +119,7 @@ public class RemoveCommandHandler
     {
         var itemsToDelete = selectedItems.ToList();
         var done = false;
+        var deletedCount = 0;
         do
         {
             try
@@ -120,6 +127,7 @@ public class RemoveCommandHandler
                 await Task.WhenAll(itemsToDelete.Select(async item =>
                 {
                     await _todoItemRepository.DeleteAsync(item);
+                    deletedCount++;
                 }).ToArray());
                 done = true;
             }
@@ -128,7 +136,7 @@ public class RemoveCommandHandler
                 var exc = agg.InnerExceptions.First();
                 if(exc.Message.Contains("Too many retries performed"))
                 {
-                    _userInteraction.ShowError($"Too many requests, rate limit hit, {itemsToDelete.Count} left, waiting a second and trying again...");
+                    _userInteraction.ShowError($"Too many requests, rate limit hit, {itemsToDelete.Count - deletedCount} left, waiting a second and trying again...");
                     await Task.Delay(1000);
                 }
                 else
@@ -137,6 +145,9 @@ public class RemoveCommandHandler
                 }
             }
         } while (!done);
-        _userInteraction.ClearScreen();
+
+        if(done) {
+            _userInteraction.ShowSuccess($"Deleted {deletedCount} items.");
+        }
     }
 }

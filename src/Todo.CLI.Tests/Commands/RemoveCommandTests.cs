@@ -52,7 +52,7 @@ public class RemoveCommandTests
         var handler = RemoveCommandHandler.Create(_serviceProvider);
 
         // Act
-        var result = await handler(null, null, false, true);
+        var result = await handler(Array.Empty<string>(), null, null, false, true);
 
         // Assert
         Assert.Equal(0, result);
@@ -82,7 +82,7 @@ public class RemoveCommandTests
         var handler = RemoveCommandHandler.Create(_serviceProvider);
 
         // Act
-        var result = await handler(listName, null, false, false);
+        var result = await handler(Array.Empty<string>(), listName, null, false, false);
 
         // Assert
         Assert.Equal(0, result);
@@ -113,7 +113,7 @@ public class RemoveCommandTests
         var handler = RemoveCommandHandler.Create(_serviceProvider);
 
         // Act
-        var result = await handler(null, olderThan, false, false);
+        var result = await handler(Array.Empty<string>(), null, olderThan, false, false);
 
         // Assert
         Assert.Equal(0, result);
@@ -136,7 +136,7 @@ public class RemoveCommandTests
         var handler = RemoveCommandHandler.Create(_serviceProvider);
 
         // Act
-        var result = await handler(null, null, false, false);
+        var result = await handler(Array.Empty<string>(), null, null, false, false);
 
         // Assert
         Assert.Equal(0, result);
@@ -164,7 +164,7 @@ public class RemoveCommandTests
         var handler = RemoveCommandHandler.Create(_serviceProvider);
 
         // Act
-        var result = await handler(null, null, true, false);
+        var result = await handler(Array.Empty<string>(), null, null, true, false);
 
         // Assert
         Assert.Equal(0, result);
@@ -192,7 +192,63 @@ public class RemoveCommandTests
         var handler = RemoveCommandHandler.Create(_serviceProvider);
 
         // Act
-        var result = await handler(null, null, true, false);
+        var result = await handler(Array.Empty<string>(), null, null, true, false);
+
+        // Assert
+        Assert.Equal(0, result);
+        _mockRepository.Verify(r => r.DeleteAsync(It.IsAny<TodoItem>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task RemoveCommand_WithIds_ShouldRemoveItems()
+    {
+        // Arrange
+        var items = new List<TodoItem>
+        {
+            new() { Id = "1", Subject = "Task 1" },
+            new() { Id = "2", Subject = "Task 2" },
+            new() { Id = "3", Subject = "Task 3" }
+        };
+
+        _mockUserInteraction.Setup(ui => ui.Confirm(It.IsAny<string>()))
+            .Returns(true);
+
+        _mockRepository.Setup(r => r.ListAllAsync(true))
+            .ReturnsAsync(items);
+
+        var command = new RemoveCommand(_serviceProvider);
+        var handler = RemoveCommandHandler.Create(_serviceProvider);
+
+        // Act
+        var result = await handler(new[] { "1", "2" }, null, null, false, false);
+
+        // Assert
+        Assert.Equal(0, result);
+        _mockRepository.Verify(r => r.DeleteAsync(It.IsAny<TodoItem>()), Times.Exactly(2));
+    }
+
+    [Fact]
+    public async Task RemoveCommand_WithIdsAndUserCancellation_ShouldNotRemoveItems()
+    {
+        // Arrange
+        var items = new List<TodoItem>
+        {
+            new() { Id = "1", Subject = "Task 1" },
+            new() { Id = "2", Subject = "Task 2" },
+            new() { Id = "3", Subject = "Task 3" }
+        };
+
+        _mockUserInteraction.Setup(ui => ui.Confirm(It.IsAny<string>()))
+            .Returns(false);
+
+        _mockRepository.Setup(r => r.ListAllAsync(true))
+            .ReturnsAsync(items);
+
+        var command = new RemoveCommand(_serviceProvider);
+        var handler = RemoveCommandHandler.Create(_serviceProvider);
+
+        // Act
+        var result = await handler(new[] { "1", "2" }, null, null, false, false);
 
         // Assert
         Assert.Equal(0, result);
