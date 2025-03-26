@@ -29,67 +29,151 @@ public class CompleteCommandTests
     }
 
     [Fact]
-    public async Task Complete_WithValidId_ShouldCompleteItem()
+    public async Task Complete_WithValidIds_ShouldCompleteItems()
     {
         // Arrange
-        var itemId = "1";
+        var itemIds = new[] { "1", "2" };
         var items = new List<TodoItem>
         {
-            new() { Id = itemId, Subject = "Test Item", IsCompleted = false },
-            new() { Id = "2", Subject = "Other Item", IsCompleted = false }
+            new() { Id = "1", Subject = "Test Item 1", IsCompleted = false },
+            new() { Id = "2", Subject = "Test Item 2", IsCompleted = false },
+            new() { Id = "3", Subject = "Other Item", IsCompleted = false }
         };
 
         _mockRepository.Setup(r => r.ListAllAsync(false))
             .ReturnsAsync(items);
 
-        var handler = Todo.CLI.Handlers.CompleteCommandHandler.Create(_serviceProvider);
+        var handler = CompleteCommandHandler.Create(_serviceProvider);
 
         // Act
-        var result = await handler(itemId);
+        var result = await handler(itemIds, null, null, false);
 
         // Assert
         Assert.Equal(0, result);
-        _mockRepository.Verify(r => r.CompleteAsync(It.Is<TodoItem>(i => i.Id == itemId)), Times.Once);
-        _mockRepository.Verify(r => r.CompleteAsync(It.Is<TodoItem>(i => i.Id != itemId)), Times.Never);
+        _mockRepository.Verify(r => r.CompleteAsync(It.Is<TodoItem>(i => i.Id == "1")), Times.Once);
+        _mockRepository.Verify(r => r.CompleteAsync(It.Is<TodoItem>(i => i.Id == "2")), Times.Once);
+        _mockRepository.Verify(r => r.CompleteAsync(It.Is<TodoItem>(i => i.Id == "3")), Times.Never);
     }
 
     [Fact]
-    public async Task Complete_WithInvalidId_ShouldShowError()
+    public async Task Complete_WithListName_ShouldFilterByList()
     {
         // Arrange
-        var itemId = "999";
+        var listName = "Test List";
         var items = new List<TodoItem>
         {
-            new() { Id = "1", Subject = "Test Item", IsCompleted = false },
-            new() { Id = "2", Subject = "Other Item", IsCompleted = false }
+            new() { Id = "1", Subject = "Test Item 1", IsCompleted = false },
+            new() { Id = "2", Subject = "Test Item 2", IsCompleted = false }
+        };
+
+        _mockRepository.Setup(r => r.ListByListNameAsync(listName, false))
+            .ReturnsAsync(items);
+        _mockUserInteraction.Setup(ui => ui.SelectItems(It.IsAny<string>(), It.IsAny<IEnumerable<TodoItem>>()))
+            .Returns(items);
+
+        var handler = CompleteCommandHandler.Create(_serviceProvider);
+
+        // Act
+        var result = await handler(Array.Empty<string>(), listName, null, false);
+
+        // Assert
+        Assert.Equal(0, result);
+        _mockRepository.Verify(r => r.ListByListNameAsync(listName, false), Times.Once);
+        _mockRepository.Verify(r => r.CompleteAsync(It.IsAny<TodoItem>()), Times.Exactly(2));
+    }
+
+    [Fact]
+    public async Task Complete_WithOlderThan_ShouldFilterByDate()
+    {
+        // Arrange
+        var olderThan = DateTime.UtcNow.AddDays(-7);
+        var items = new List<TodoItem>
+        {
+            new() { Id = "1", Subject = "Old Item", IsCompleted = false, Created = olderThan.AddDays(-1) },
+            new() { Id = "2", Subject = "New Item", IsCompleted = false, Created = olderThan.AddDays(1) }
         };
 
         _mockRepository.Setup(r => r.ListAllAsync(false))
             .ReturnsAsync(items);
+        _mockUserInteraction.Setup(ui => ui.SelectItems(It.IsAny<string>(), It.IsAny<IEnumerable<TodoItem>>()))
+            .Returns(new[] { items[0] });
 
-        var handler = Todo.CLI.Handlers.CompleteCommandHandler.Create(_serviceProvider);
+        var handler = CompleteCommandHandler.Create(_serviceProvider);
 
         // Act
-        var result = await handler(itemId);
+        var result = await handler(Array.Empty<string>(), null, olderThan, false);
 
         // Assert
-        Assert.Equal(1, result);
-        _mockUserInteraction.Verify(ui => ui.ShowError($"Item with ID {itemId} not found."), Times.Once);
+        Assert.Equal(0, result);
+        _mockRepository.Verify(r => r.CompleteAsync(It.Is<TodoItem>(i => i.Id == "1")), Times.Once);
+        _mockRepository.Verify(r => r.CompleteAsync(It.Is<TodoItem>(i => i.Id == "2")), Times.Never);
+    }
+
+    [Fact]
+    public async Task Complete_WithAllOption_ShouldCompleteAllItems()
+    {
+        // Arrange
+        var items = new List<TodoItem>
+        {
+            new() { Id = "1", Subject = "Test Item 1", IsCompleted = false },
+            new() { Id = "2", Subject = "Test Item 2", IsCompleted = false }
+        };
+
+        _mockRepository.Setup(r => r.ListAllAsync(false))
+            .ReturnsAsync(items);
+        _mockUserInteraction.Setup(ui => ui.Confirm(It.IsAny<string>()))
+            .Returns(true);
+
+        var handler = CompleteCommandHandler.Create(_serviceProvider);
+
+        // Act
+        var result = await handler(Array.Empty<string>(), null, null, true);
+
+        // Assert
+        Assert.Equal(0, result);
+        _mockRepository.Verify(r => r.CompleteAsync(It.IsAny<TodoItem>()), Times.Exactly(2));
+    }
+
+    [Fact]
+    public async Task Complete_WithAllOption_WhenUserCancels_ShouldNotCompleteItems()
+    {
+        // Arrange
+        var items = new List<TodoItem>
+        {
+            new() { Id = "1", Subject = "Test Item 1", IsCompleted = false },
+            new() { Id = "2", Subject = "Test Item 2", IsCompleted = false }
+        };
+
+        _mockRepository.Setup(r => r.ListAllAsync(false))
+            .ReturnsAsync(items);
+        _mockUserInteraction.Setup(ui => ui.Confirm(It.IsAny<string>()))
+            .Returns(false);
+
+        var handler = CompleteCommandHandler.Create(_serviceProvider);
+
+        // Act
+        var result = await handler(Array.Empty<string>(), null, null, true);
+
+        // Assert
+        Assert.Equal(0, result);
         _mockRepository.Verify(r => r.CompleteAsync(It.IsAny<TodoItem>()), Times.Never);
     }
 
     [Fact]
-    public async Task Complete_WithEmptyId_ShouldShowError()
+    public async Task Complete_WhenNoItemsFound_ShouldShowError()
     {
         // Arrange
-        var handler = Todo.CLI.Handlers.CompleteCommandHandler.Create(_serviceProvider);
+        _mockRepository.Setup(r => r.ListAllAsync(false))
+            .ReturnsAsync(new List<TodoItem>());
+
+        var handler = CompleteCommandHandler.Create(_serviceProvider);
 
         // Act
-        var result = await handler("");
+        var result = await handler(Array.Empty<string>(), null, null, false);
 
         // Assert
-        Assert.Equal(1, result);
-        _mockUserInteraction.Verify(ui => ui.ShowError("Please provide an item ID to complete."), Times.Once);
+        Assert.Equal(0, result);
+        _mockUserInteraction.Verify(ui => ui.ShowError("No items found."), Times.Once);
         _mockRepository.Verify(r => r.CompleteAsync(It.IsAny<TodoItem>()), Times.Never);
     }
 
@@ -97,10 +181,9 @@ public class CompleteCommandTests
     public async Task Complete_WhenRepositoryThrowsException_ShouldShowError()
     {
         // Arrange
-        var itemId = "1";
         var items = new List<TodoItem>
         {
-            new() { Id = itemId, Subject = "Test Item", IsCompleted = false }
+            new() { Id = "1", Subject = "Test Item", IsCompleted = false }
         };
 
         _mockRepository.Setup(r => r.ListAllAsync(false))
@@ -108,13 +191,42 @@ public class CompleteCommandTests
         _mockRepository.Setup(r => r.CompleteAsync(It.IsAny<TodoItem>()))
             .ThrowsAsync(new Exception("Test error"));
 
-        var handler = Todo.CLI.Handlers.CompleteCommandHandler.Create(_serviceProvider);
+        var handler = CompleteCommandHandler.Create(_serviceProvider);
 
         // Act
-        var result = await handler(itemId);
+        var result = await handler(new[] { "1" }, null, null, false);
 
         // Assert
         Assert.Equal(1, result);
-        _mockUserInteraction.Verify(ui => ui.ShowError("Error completing item: Test error"), Times.Once);
+        _mockUserInteraction.Verify(ui => ui.ShowError("Error completing one or more items: Test error"), Times.Once);
+    }
+
+    [Fact]
+    public async Task Complete_WhenTooManyItems_ShouldShowError()
+    {
+        // Arrange
+        var items = new List<TodoItem>();
+        for (int i = 0; i < 100; i++)
+        {
+            items.Add(new TodoItem { Id = i.ToString(), Subject = $"Item {i}", IsCompleted = false });
+        }
+
+        _mockRepository.Setup(r => r.ListAllAsync(false))
+            .ReturnsAsync(items);
+        _mockUserInteraction.Setup(ui => ui.SelectItems(It.IsAny<string>(), It.IsAny<IEnumerable<TodoItem>>()))
+            .Throws(new ArgumentOutOfRangeException("top", 
+                "The value must be greater than or equal to zero and less than the console's buffer size in that dimension."));
+
+        var handler = CompleteCommandHandler.Create(_serviceProvider);
+
+        // Act
+        var result = await handler(Array.Empty<string>(), null, null, false);
+
+        // Assert
+        Assert.Equal(1, result);
+        _mockUserInteraction.Verify(ui => ui.ShowError(
+            $"Too many tasks ({items.Count}) to display on the current console. Filter tasks by passing a specific list using the --list parameter, or increase buffer size of the console."), 
+            Times.Once);
+        _mockRepository.Verify(r => r.CompleteAsync(It.IsAny<TodoItem>()), Times.Never);
     }
 } 
