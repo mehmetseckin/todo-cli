@@ -26,6 +26,7 @@ public class ListCommand : Command
     {
         Description = "Retrieves a list of the to do items across all To-Do lists.";
 
+        Add(TodoCommand.OutputFormat);
         Add(GetAllOption);
         Add(NoStatusOption);
         Add(OlderThanOption);

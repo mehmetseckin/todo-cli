@@ -1,12 +1,11 @@
 ﻿using System.CommandLine;
 using Microsoft.Extensions.DependencyInjection;
 using Todo.CLI.Commands;
-using Todo.CLI.Handlers;
 using Todo.CLI.UI;
 using Todo.Core;
 using Todo.CLI.Auth;
 using Todo.CLI;
-using Todo.Core.Repository;
+using System;
 
 var services = new ServiceCollection()
     .AddSingleton<TodoCliConfiguration>()
@@ -14,7 +13,19 @@ var services = new ServiceCollection()
     .AddTodoRepositories()
     .AddSingleton<IUserInteraction>(sp => 
     {
-        var outputFormat = sp.GetRequiredService<OutputFormat>();
+        var outputFormat = OutputFormat.Interactive;
+        if (args != null && args.Length > 1)
+        {
+            for (var i = 0; i < args.Length - 1; i++)
+            {
+                if ((args[i] == "--output" || args[i] == "-o") && 
+                    Enum.TryParse<OutputFormat>(args[i + 1], true, out var format))
+                {
+                    outputFormat = format;
+                    break;
+                }
+            }
+        }
         return new InquirerUserInteraction(outputFormat);
     });
 
