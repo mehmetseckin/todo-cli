@@ -7,6 +7,7 @@ public class TodoItem
     public bool IsCompleted { get; set; }
     public string Status { get; set; } = "NotStarted";
     public DateTime? Completed { get; set; }
+    public DateTime? Created { get; set; }
     public string? ListId { get; set; }
 
     public override string ToString() => $"{Subject} - {Status} {(IsCompleted ? Completed?.ToString("yyyy-MM-dd") : string.Empty)}";

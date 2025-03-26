@@ -28,6 +28,7 @@ public static class TodoDependencyInjectionExtensions
             IsCompleted = task.Status == Microsoft.Graph.Models.TaskStatus.Completed,
             Status = task.Status?.ToString() ?? "Unknown",
             Completed = task.CompletedDateTime?.ToDateTime(),
+            Created = task.CreatedDateTime?.DateTime,
             ListId = listId
         };
     }
