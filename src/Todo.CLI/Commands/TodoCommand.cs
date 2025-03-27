@@ -9,7 +9,7 @@ public class TodoCommand : RootCommand
     private static readonly Option<bool> Version = new(["-v", "--version"], "Prints out the todo CLI version.");
     public static readonly Option<OutputFormat> OutputFormat = new(
         aliases: ["-o", "--output"],
-        description: "Specifies the output format. Defaults to interactive.",
+        description: "Specifies the output format.",
         getDefaultValue: () => UI.OutputFormat.Interactive);
 
     public TodoCommand(IServiceProvider serviceProvider)
