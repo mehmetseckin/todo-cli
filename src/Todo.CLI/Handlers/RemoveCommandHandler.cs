@@ -15,22 +15,66 @@ public class RemoveCommandHandler
     private const string UIHelpMessage = "Use arrow keys to navigate between options. [SPACEBAR] to mark the options, and [ENTER] to confirm your input.";
     private readonly IUserInteraction _userInteraction;
     private readonly ITodoItemRepository _todoItemRepository;
+    private readonly ITodoListRepository _todoListRepository;
 
-    private RemoveCommandHandler(ITodoItemRepository todoItemRepository, IUserInteraction userInteraction)
+    private RemoveCommandHandler(ITodoItemRepository todoItemRepository, ITodoListRepository todoListRepository, IUserInteraction userInteraction)
     {
         _todoItemRepository = todoItemRepository;
+        _todoListRepository = todoListRepository;
         _userInteraction = userInteraction;
     }
 
-    public static Func<string[], string, DateTime?, bool, bool, Task<int>> Create(IServiceProvider serviceProvider)
+    public class List 
     {
-        var todoItemRepository = serviceProvider.GetRequiredService<ITodoItemRepository>();
-        var userInteraction = serviceProvider.GetRequiredService<IUserInteraction>();
-        var handler = new RemoveCommandHandler(todoItemRepository, userInteraction);
-        return handler.HandleAsync;
+        public static Func<string, Task> Create(IServiceProvider serviceProvider)
+        {
+            var todoItemRepository = serviceProvider.GetRequiredService<ITodoItemRepository>();
+            var todoListRepository = serviceProvider.GetRequiredService<ITodoListRepository>();
+            var userInteraction = serviceProvider.GetRequiredService<IUserInteraction>();
+            var handler = new RemoveCommandHandler(todoItemRepository, todoListRepository, userInteraction);
+            return handler.HandleListAsync;
+        }
     }
 
-    private async Task<int> HandleAsync(string[] ids, string listName, DateTime? olderThan, bool removeAll, bool completedOnly)
+    public class Item 
+    {
+        public static Func<string[], string, DateTime?, bool, bool, Task<int>> Create(IServiceProvider serviceProvider)
+        {
+            var todoItemRepository = serviceProvider.GetRequiredService<ITodoItemRepository>();
+            var todoListRepository = serviceProvider.GetRequiredService<ITodoListRepository>();
+            var userInteraction = serviceProvider.GetRequiredService<IUserInteraction>();
+            var handler = new RemoveCommandHandler(todoItemRepository, todoListRepository, userInteraction);
+            return handler.HandleItemAsync;
+        }
+    }
+
+    private async Task HandleListAsync(string listName)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(listName))
+            {
+                _userInteraction.ShowError("List name is required to remove a list.");
+                return;
+            }
+
+            var list = await _todoListRepository.GetByNameAsync(listName);
+            if (list == null)
+            {
+                _userInteraction.ShowError($"No list found with the name '{listName}'.");
+                return;
+            }
+
+            await _todoListRepository.DeleteAsync(list);
+            _userInteraction.ShowSuccess($"List '{listName}' removed successfully.");
+        }
+        catch (Exception ex)
+        {
+            _userInteraction.ShowError($"Error removing list: {ex.Message}");
+        }
+    }
+
+    private async Task<int> HandleItemAsync(string[] ids, string listName, DateTime? olderThan, bool removeAll, bool completedOnly)
     {
         if(ids.Length > 0)
         {
