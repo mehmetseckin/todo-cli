@@ -16,17 +16,22 @@ namespace Todo.CLI.Tests.Commands;
 
 public class RemoveCommandTests
 {
-    private readonly Mock<ITodoItemRepository> _mockRepository;
+    private readonly Mock<ITodoItemRepository> _mockItemRepository;
+    private readonly Mock<ITodoListRepository> _mockListRepository;
     private readonly Mock<IUserInteraction> _mockUserInteraction;
     private readonly IServiceProvider _serviceProvider;
 
     public RemoveCommandTests()
     {
-        _mockRepository = new Mock<ITodoItemRepository>();
+        _mockItemRepository = new Mock<ITodoItemRepository>();
+        _mockListRepository = new Mock<ITodoListRepository>();
         _mockUserInteraction = new Mock<IUserInteraction>();
+        _mockUserInteraction.Setup(x => x.OutputFormatter).Returns(new InteractiveOutputFormatter());
+
         var services = new ServiceCollection();
-        services.AddSingleton(_mockRepository.Object);
-        services.AddSingleton(_mockUserInteraction.Object);
+        services.AddSingleton(_mockItemRepository.Object);
+        services.AddSingleton(_mockListRepository.Object);
+        services.AddSingleton<IUserInteraction>(_mockUserInteraction.Object);
         _serviceProvider = services.BuildServiceProvider();
     }
 
@@ -45,19 +50,19 @@ public class RemoveCommandTests
         _mockUserInteraction.Setup(ui => ui.SelectItems(It.IsAny<string>(), It.IsAny<IEnumerable<TodoItem>>()))
             .Returns(completedItems);
 
-        _mockRepository.Setup(r => r.ListAllAsync(true))
+        _mockItemRepository.Setup(r => r.ListAllAsync(true))
             .ReturnsAsync(items);
 
         var command = new RemoveCommand(_serviceProvider);
-        var handler = RemoveCommandHandler.Create(_serviceProvider);
+        var handler = RemoveCommandHandler.Item.Create(_serviceProvider);
 
         // Act
         var result = await handler(Array.Empty<string>(), null, null, false, true);
 
         // Assert
         Assert.Equal(0, result);
-        _mockRepository.Verify(r => r.DeleteAsync(It.Is<TodoItem>(i => i != null && i.IsCompleted)), Times.Exactly(2));
-        _mockRepository.Verify(r => r.DeleteAsync(It.Is<TodoItem>(i => i != null && !i.IsCompleted)), Times.Never);
+        _mockItemRepository.Verify(r => r.DeleteAsync(It.Is<TodoItem>(i => i != null && i.IsCompleted)), Times.Exactly(2));
+        _mockItemRepository.Verify(r => r.DeleteAsync(It.Is<TodoItem>(i => i != null && !i.IsCompleted)), Times.Never);
     }
 
     [Fact]
@@ -75,19 +80,19 @@ public class RemoveCommandTests
         _mockUserInteraction.Setup(ui => ui.SelectItems(It.IsAny<string>(), It.IsAny<IEnumerable<TodoItem>>()))
             .Returns(listItems);
 
-        _mockRepository.Setup(r => r.ListByListNameAsync(listName, true))
+        _mockItemRepository.Setup(r => r.ListByListNameAsync(listName, true))
             .ReturnsAsync(items);
 
         var command = new RemoveCommand(_serviceProvider);
-        var handler = RemoveCommandHandler.Create(_serviceProvider);
+        var handler = RemoveCommandHandler.Item.Create(_serviceProvider);
 
         // Act
         var result = await handler(Array.Empty<string>(), listName, null, false, false);
 
         // Assert
         Assert.Equal(0, result);
-        _mockRepository.Verify(r => r.DeleteAsync(It.Is<TodoItem>(i => i != null && i.ListId == listName)), Times.Once);
-        _mockRepository.Verify(r => r.DeleteAsync(It.Is<TodoItem>(i => i != null && i.ListId != listName)), Times.Never);
+        _mockItemRepository.Verify(r => r.DeleteAsync(It.Is<TodoItem>(i => i != null && i.ListId == listName)), Times.Once);
+        _mockItemRepository.Verify(r => r.DeleteAsync(It.Is<TodoItem>(i => i != null && i.ListId != listName)), Times.Never);
     }
 
     [Fact]
@@ -106,19 +111,19 @@ public class RemoveCommandTests
         _mockUserInteraction.Setup(ui => ui.SelectItems(It.IsAny<string>(), It.IsAny<IEnumerable<TodoItem>>()))
             .Returns(oldItems);
 
-        _mockRepository.Setup(r => r.ListAllAsync(true))
+        _mockItemRepository.Setup(r => r.ListAllAsync(true))
             .ReturnsAsync(items);
 
         var command = new RemoveCommand(_serviceProvider);
-        var handler = RemoveCommandHandler.Create(_serviceProvider);
+        var handler = RemoveCommandHandler.Item.Create(_serviceProvider);
 
         // Act
         var result = await handler(Array.Empty<string>(), null, olderThan, false, false);
 
         // Assert
         Assert.Equal(0, result);
-        _mockRepository.Verify(r => r.DeleteAsync(It.Is<TodoItem>(i => i != null && i.Completed < olderThan)), Times.Once);
-        _mockRepository.Verify(r => r.DeleteAsync(It.Is<TodoItem>(i => i != null && i.Completed >= olderThan)), Times.Never);
+        _mockItemRepository.Verify(r => r.DeleteAsync(It.Is<TodoItem>(i => i != null && i.Completed < olderThan)), Times.Once);
+        _mockItemRepository.Verify(r => r.DeleteAsync(It.Is<TodoItem>(i => i != null && i.Completed >= olderThan)), Times.Never);
     }
 
     [Fact]
@@ -129,18 +134,18 @@ public class RemoveCommandTests
         _mockUserInteraction.Setup(ui => ui.SelectItems(It.IsAny<string>(), It.IsAny<IEnumerable<TodoItem>>()))
             .Returns(items);
 
-        _mockRepository.Setup(r => r.ListAllAsync(true))
+        _mockItemRepository.Setup(r => r.ListAllAsync(true))
             .ReturnsAsync(items);
 
         var command = new RemoveCommand(_serviceProvider);
-        var handler = RemoveCommandHandler.Create(_serviceProvider);
+        var handler = RemoveCommandHandler.Item.Create(_serviceProvider);
 
         // Act
         var result = await handler(Array.Empty<string>(), null, null, false, false);
 
         // Assert
         Assert.Equal(0, result);
-        _mockRepository.Verify(r => r.DeleteAsync(It.IsAny<TodoItem>()), Times.Never);
+        _mockItemRepository.Verify(r => r.DeleteAsync(It.IsAny<TodoItem>()), Times.Never);
     }
 
     [Fact]
@@ -157,18 +162,18 @@ public class RemoveCommandTests
         _mockUserInteraction.Setup(ui => ui.Confirm(It.IsAny<string>()))
             .Returns(true);
 
-        _mockRepository.Setup(r => r.ListAllAsync(true))
+        _mockItemRepository.Setup(r => r.ListAllAsync(true))
             .ReturnsAsync(items);
 
         var command = new RemoveCommand(_serviceProvider);
-        var handler = RemoveCommandHandler.Create(_serviceProvider);
+        var handler = RemoveCommandHandler.Item.Create(_serviceProvider);
 
         // Act
         var result = await handler(Array.Empty<string>(), null, null, true, false);
 
         // Assert
         Assert.Equal(0, result);
-        _mockRepository.Verify(r => r.DeleteAsync(It.IsAny<TodoItem>()), Times.Exactly(3));
+        _mockItemRepository.Verify(r => r.DeleteAsync(It.IsAny<TodoItem>()), Times.Exactly(3));
     }
 
     [Fact]
@@ -185,18 +190,18 @@ public class RemoveCommandTests
         _mockUserInteraction.Setup(ui => ui.Confirm(It.IsAny<string>()))
             .Returns(false);
 
-        _mockRepository.Setup(r => r.ListAllAsync(true))
+        _mockItemRepository.Setup(r => r.ListAllAsync(true))
             .ReturnsAsync(items);
 
         var command = new RemoveCommand(_serviceProvider);
-        var handler = RemoveCommandHandler.Create(_serviceProvider);
+        var handler = RemoveCommandHandler.Item.Create(_serviceProvider);
 
         // Act
         var result = await handler(Array.Empty<string>(), null, null, true, false);
 
         // Assert
         Assert.Equal(0, result);
-        _mockRepository.Verify(r => r.DeleteAsync(It.IsAny<TodoItem>()), Times.Never);
+        _mockItemRepository.Verify(r => r.DeleteAsync(It.IsAny<TodoItem>()), Times.Never);
     }
 
     [Fact]
@@ -213,18 +218,18 @@ public class RemoveCommandTests
         _mockUserInteraction.Setup(ui => ui.Confirm(It.IsAny<string>()))
             .Returns(true);
 
-        _mockRepository.Setup(r => r.ListAllAsync(true))
+        _mockItemRepository.Setup(r => r.ListAllAsync(true))
             .ReturnsAsync(items);
 
         var command = new RemoveCommand(_serviceProvider);
-        var handler = RemoveCommandHandler.Create(_serviceProvider);
+        var handler = RemoveCommandHandler.Item.Create(_serviceProvider);
 
         // Act
         var result = await handler(new[] { "1", "2" }, null, null, false, false);
 
         // Assert
         Assert.Equal(0, result);
-        _mockRepository.Verify(r => r.DeleteAsync(It.IsAny<TodoItem>()), Times.Exactly(2));
+        _mockItemRepository.Verify(r => r.DeleteAsync(It.IsAny<TodoItem>()), Times.Exactly(2));
     }
 
     [Fact]
@@ -241,17 +246,103 @@ public class RemoveCommandTests
         _mockUserInteraction.Setup(ui => ui.Confirm(It.IsAny<string>()))
             .Returns(false);
 
-        _mockRepository.Setup(r => r.ListAllAsync(true))
+        _mockItemRepository.Setup(r => r.ListAllAsync(true))
             .ReturnsAsync(items);
 
         var command = new RemoveCommand(_serviceProvider);
-        var handler = RemoveCommandHandler.Create(_serviceProvider);
+        var handler = RemoveCommandHandler.Item.Create(_serviceProvider);
 
         // Act
         var result = await handler(new[] { "1", "2" }, null, null, false, false);
 
         // Assert
         Assert.Equal(0, result);
-        _mockRepository.Verify(r => r.DeleteAsync(It.IsAny<TodoItem>()), Times.Never);
+        _mockItemRepository.Verify(r => r.DeleteAsync(It.IsAny<TodoItem>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task RemoveList_WithValidListName_ShouldRemoveList()
+    {
+        // Arrange
+        var listName = "Test List";
+        var list = new TodoList { Id = "list-123", Name = listName };
+
+        _mockListRepository.Setup(r => r.GetByNameAsync(listName))
+            .ReturnsAsync(list);
+
+        var command = new RemoveCommand(_serviceProvider);
+        var handler = RemoveCommandHandler.List.Create(_serviceProvider);
+
+        // Act
+        await handler(listName);
+
+        // Assert
+        _mockListRepository.Verify(r => r.GetByNameAsync(listName), Times.Once);
+        _mockListRepository.Verify(r => r.DeleteAsync(list), Times.Once);
+        _mockUserInteraction.Verify(ui => ui.ShowSuccess($"List '{listName}' removed successfully."), Times.Once);
+    }
+
+    [Fact]
+    public async Task RemoveList_WithNonExistentList_ShouldShowError()
+    {
+        // Arrange
+        var listName = "Non-existent List";
+
+        _mockListRepository.Setup(r => r.GetByNameAsync(listName))
+            .ReturnsAsync((TodoList)null);
+
+        var command = new RemoveCommand(_serviceProvider);
+        var handler = RemoveCommandHandler.List.Create(_serviceProvider);
+
+        // Act
+        await handler(listName);
+
+        // Assert
+        _mockListRepository.Verify(r => r.GetByNameAsync(listName), Times.Once);
+        _mockListRepository.Verify(r => r.DeleteAsync(It.IsAny<TodoList>()), Times.Never);
+        _mockUserInteraction.Verify(ui => ui.ShowError($"No list found with the name '{listName}'."), Times.Once);
+    }
+
+    [Fact]
+    public async Task RemoveList_WithEmptyListName_ShouldShowError()
+    {
+        // Arrange
+        var listName = "";
+
+        var command = new RemoveCommand(_serviceProvider);
+        var handler = RemoveCommandHandler.List.Create(_serviceProvider);
+
+        // Act
+        await handler(listName);
+
+        // Assert
+        _mockListRepository.Verify(r => r.GetByNameAsync(It.IsAny<string>()), Times.Never);
+        _mockListRepository.Verify(r => r.DeleteAsync(It.IsAny<TodoList>()), Times.Never);
+        _mockUserInteraction.Verify(ui => ui.ShowError("List name is required to remove a list."), Times.Once);
+    }
+
+    [Fact]
+    public async Task RemoveList_WhenDeletionFails_ShouldShowError()
+    {
+        // Arrange
+        var listName = "Test List";
+        var list = new TodoList { Id = "list-123", Name = listName };
+        var errorMessage = "Failed to delete list";
+
+        _mockListRepository.Setup(r => r.GetByNameAsync(listName))
+            .ReturnsAsync(list);
+        _mockListRepository.Setup(r => r.DeleteAsync(list))
+            .ThrowsAsync(new Exception(errorMessage));
+
+        var command = new RemoveCommand(_serviceProvider);
+        var handler = RemoveCommandHandler.List.Create(_serviceProvider);
+
+        // Act
+        await handler(listName);
+
+        // Assert
+        _mockListRepository.Verify(r => r.GetByNameAsync(listName), Times.Once);
+        _mockListRepository.Verify(r => r.DeleteAsync(list), Times.Once);
+        _mockUserInteraction.Verify(ui => ui.ShowError($"Error removing list: {errorMessage}"), Times.Once);
     }
 } 
