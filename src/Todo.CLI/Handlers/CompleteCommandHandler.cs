@@ -117,7 +117,6 @@ public class CompleteCommandHandler
             return 0;
         }
 
-        _userInteraction.ClearScreen();
         return 0;
     }
 

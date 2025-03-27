@@ -43,9 +43,4 @@ public class InquirerUserInteraction : IUserInteraction
     {
         _outputFormatter.FormatSuccess(message);
     }
-
-    public void ClearScreen()
-    {
-        Console.Clear();
-    }
 } 

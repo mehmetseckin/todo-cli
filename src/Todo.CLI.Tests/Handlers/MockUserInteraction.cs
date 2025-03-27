@@ -44,11 +44,6 @@ public class MockUserInteraction : IUserInteraction
         // No-op in tests
     }
 
-    public void ClearScreen()
-    {
-        // No-op in tests
-    }
-
     public void Prompt(string message)
     {
         LastPrompt = message;

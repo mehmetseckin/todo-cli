@@ -9,6 +9,5 @@ public interface IUserInteraction
     bool Confirm(string message);
     void ShowError(string message);
     void ShowSuccess(string message);
-    void ClearScreen();
     IOutputFormatter OutputFormatter { get; }
 } 

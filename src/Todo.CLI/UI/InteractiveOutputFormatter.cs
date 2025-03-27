@@ -12,7 +12,6 @@ public class InteractiveOutputFormatter : IOutputFormatter
 
     public string FormatSuccess(string message)
     {
-        Console.Clear();
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine(message);
         Console.ResetColor();
@@ -21,7 +20,6 @@ public class InteractiveOutputFormatter : IOutputFormatter
 
     public string FormatError(string message)
     {
-        Console.Clear();
         Console.ForegroundColor = ConsoleColor.Red;
         Console.Error.WriteLine(message);
         Console.ResetColor();
