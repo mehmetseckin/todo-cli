@@ -86,7 +86,7 @@ internal class TodoItemRepository : RepositoryBase, ITodoItemRepository
             tasks.Remove(task);
             var (listId, taskResponse) = await task;
             IEnumerable<TodoTask> items = taskResponse!.Value!;
-            if (includeCompleted)
+            if (!includeCompleted)
                 items = items.Where(t => t.Status is not TaskStatus.Completed);
             foreach (var todoTask in items)
             {

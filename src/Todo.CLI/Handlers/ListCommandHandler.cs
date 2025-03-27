@@ -49,37 +49,4 @@ public class ListCommandHandler
             tasks = tasks.Where(item => item.IsCompleted && item.Completed < olderThan);
         outputFormatter.FormatItems(tasks, noStatus);
     }
-
-    private static void Render(TodoList list, bool noStatus)
-    {
-        Console.WriteLine($"{list.Name} ({list.Count}):");
-        foreach (var item in list.Tasks) Render(item, noStatus);
-    }
-
-    private static void Render(TodoItem item, bool noStatus)
-    {
-        Console.WriteLine(item.ToString(noStatus));
-    }
-
-    private static void RenderBullet(TodoItem item)
-    {
-        ConsoleColor bulletColor;
-        char bullet;
-
-        if (item.IsCompleted)
-        {
-            bulletColor = ConsoleColor.Green;
-            bullet = CompletedBullet;
-        }
-        else
-        {
-            bulletColor = ConsoleColor.Red;
-            bullet = TodoBullet;
-        }
-
-        var previousColor = Console.ForegroundColor;
-        Console.ForegroundColor = bulletColor;
-        Console.Write(bullet);
-        Console.ForegroundColor = previousColor;
-    }
 }
