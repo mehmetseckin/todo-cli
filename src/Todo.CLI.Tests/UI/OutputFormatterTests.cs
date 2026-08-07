@@ -239,7 +239,7 @@ public class OutputFormatterTests
         var jsonDoc = JsonDocument.Parse(result);
         var root = jsonDoc.RootElement;
         Assert.True(root.TryGetProperty("DueDate", out var dueDateElement));
-        Assert.True(dueDateElement.IsNull());
+        Assert.Equal(JsonValueKind.Null, dueDateElement.ValueKind);
     }
 
     [Fact]
