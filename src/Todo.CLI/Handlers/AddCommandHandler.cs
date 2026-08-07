@@ -46,7 +46,7 @@ public class AddCommandHandler
         }
     }
 
-    private static DateTime? ParseDueDate(string? dueDateString)
+    internal static DateTime? ParseDueDate(string? dueDateString)
     {
         if (string.IsNullOrWhiteSpace(dueDateString))
             return null;
