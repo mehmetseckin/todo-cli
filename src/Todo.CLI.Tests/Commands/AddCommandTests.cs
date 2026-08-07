@@ -46,7 +46,7 @@ public class AddCommandTests
         var handler = AddCommandHandler.Item.Create(_serviceProvider);
 
         // Act
-        var result = await handler(subject, listName, true);
+        var result = await handler(subject, listName, true, null);
 
         // Assert
         Assert.Equal(0, result);
@@ -104,7 +104,7 @@ public class AddCommandTests
         var handler = AddCommandHandler.Item.Create(_serviceProvider);
 
         // Act
-        var result = await handler(subject, listName, false);
+        var result = await handler(subject, listName, false, null);
 
         // Assert
         Assert.Equal(0, result);
@@ -128,7 +128,7 @@ public class AddCommandTests
         var handler = AddCommandHandler.Item.Create(_serviceProvider);
 
         // Act
-        var result = await handler(subject, listName, false);
+        var result = await handler(subject, listName, false, null);
 
         // Assert
         Assert.Equal(1, result);
@@ -151,7 +151,7 @@ public class AddCommandTests
         var handler = AddCommandHandler.Item.Create(_serviceProvider);
 
         // Act
-        var result = await handler(subject, null, false);
+        var result = await handler(subject, null, false, null);
 
         // Assert
         Assert.Equal(0, result);
@@ -174,7 +174,7 @@ public class AddCommandTests
         var handler = AddCommandHandler.Item.Create(_serviceProvider);
 
         // Act
-        var result = await handler(subject, null, false);
+        var result = await handler(subject, null, false, null);
 
         // Assert
         Assert.Equal(1, result);
@@ -191,11 +191,167 @@ public class AddCommandTests
         var handler = AddCommandHandler.Item.Create(_serviceProvider);
 
         // Act
-        var result = await handler(string.Empty, listName, false);
+        var result = await handler(string.Empty, listName, false, null);
 
         // Assert
         Assert.Equal(1, result);
         _mockUserInteraction.Verify(ui => ui.ShowError("Subject is required to add an item."), Times.Once);
         _mockItemRepository.Verify(r => r.AddAsync(It.IsAny<TodoItem>()), Times.Never);
+    }
+
+    [Fact]
+    public void ParseDueDate_Null_ReturnsNull()
+    {
+        // Act
+        var result = AddCommandHandler.ParseDueDate(null);
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void ParseDueDate_EmptyString_ReturnsNull()
+    {
+        // Act
+        var result = AddCommandHandler.ParseDueDate(string.Empty);
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void ParseDueDate_Whitespace_ReturnsNull()
+    {
+        // Act
+        var result = AddCommandHandler.ParseDueDate("   ");
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void ParseDueDate_ValidFullDate_ReturnsParsedDate()
+    {
+        // Arrange
+        var dueDateString = "2026-12-25";
+
+        // Act
+        var result = AddCommandHandler.ParseDueDate(dueDateString);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(2026, result!.Value.Year);
+        Assert.Equal(12, result.Value.Month);
+        Assert.Equal(25, result.Value.Day);
+    }
+
+    [Fact]
+    public void ParseDueDate_ValidShortDate_ReturnsCurrentYear()
+    {
+        // Arrange
+        var dueDateString = "12-25";
+        var currentYear = DateTime.Now.Year;
+
+        // Act
+        var result = AddCommandHandler.ParseDueDate(dueDateString);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(currentYear, result!.Value.Year);
+        Assert.Equal(12, result.Value.Month);
+        Assert.Equal(25, result.Value.Day);
+    }
+
+    [Fact]
+    public void ParseDueDate_InvalidFormat_ReturnsNull()
+    {
+        // Act
+        var result = AddCommandHandler.ParseDueDate("not-a-date");
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void ParseDueDate_WrongFormat_ReturnsNull()
+    {
+        // Act
+        var result = AddCommandHandler.ParseDueDate("25-12-2026");
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task AddItem_WithValidDueDate_ShouldCreateItemWithDueDate()
+    {
+        // Arrange
+        var listName = "Test List";
+        var subject = "Test Item";
+        var listId = "list-123";
+        var list = new TodoList { Id = listId, Name = listName };
+        var dueDateString = "2026-12-25";
+
+        _mockListRepository.Setup(r => r.GetByNameAsync(listName))
+            .ReturnsAsync(list);
+
+        var handler = AddCommandHandler.Item.Create(_serviceProvider);
+
+        // Act
+        var result = await handler(subject, listName, false, dueDateString);
+
+        // Assert
+        Assert.Equal(0, result);
+        _mockItemRepository.Verify(r => r.AddAsync(It.Is<TodoItem>(i =>
+            i.Subject == subject &&
+            i.ListId == listId &&
+            i.DueDate != null &&
+            i.DueDate!.Value.Year == 2026 &&
+            i.DueDate.Value.Month == 12 &&
+            i.DueDate.Value.Day == 25)), Times.Once);
+    }
+
+    [Fact]
+    public async Task AddItem_WithInvalidDueDate_ShouldShowError()
+    {
+        // Arrange
+        var listName = "Test List";
+        var subject = "Test Item";
+        var dueDateString = "invalid-date";
+
+        var handler = AddCommandHandler.Item.Create(_serviceProvider);
+
+        // Act
+        var result = await handler(subject, listName, false, dueDateString);
+
+        // Assert
+        Assert.Equal(1, result);
+        _mockUserInteraction.Verify(ui => ui.ShowError("Invalid due date format. Use yyyy-MM-dd or MM-dd."), Times.Once);
+        _mockItemRepository.Verify(r => r.AddAsync(It.IsAny<TodoItem>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task AddItem_WithoutDueDate_ShouldCreateItemWithNullDueDate()
+    {
+        // Arrange
+        var listName = "Test List";
+        var subject = "Test Item";
+        var listId = "list-123";
+        var list = new TodoList { Id = listId, Name = listName };
+
+        _mockListRepository.Setup(r => r.GetByNameAsync(listName))
+            .ReturnsAsync(list);
+
+        var handler = AddCommandHandler.Item.Create(_serviceProvider);
+
+        // Act
+        var result = await handler(subject, listName, false, null);
+
+        // Assert
+        Assert.Equal(0, result);
+        _mockItemRepository.Verify(r => r.AddAsync(It.Is<TodoItem>(i =>
+            i.Subject == subject &&
+            i.ListId == listId &&
+            i.DueDate == null)), Times.Once);
     }
 } 

@@ -36,7 +36,7 @@ public class AddCommandHandler
 
     public class Item
     {
-        public static Func<string, string, bool, Task<int>> Create(IServiceProvider serviceProvider)
+        public static Func<string, string, bool, string?, Task<int>> Create(IServiceProvider serviceProvider)
         {
             var todoListRepository = serviceProvider.GetRequiredService<ITodoListRepository>();
             var todoItemRepository = serviceProvider.GetRequiredService<ITodoItemRepository>();
@@ -44,6 +44,22 @@ public class AddCommandHandler
             var handler = new AddCommandHandler(todoListRepository, todoItemRepository, userInteraction);
             return handler.HandleItemAsync;
         }
+    }
+
+    internal static DateTime? ParseDueDate(string? dueDateString)
+    {
+        if (string.IsNullOrWhiteSpace(dueDateString))
+            return null;
+
+        var currentYear = DateTime.Now.Year;
+
+        if (DateTime.TryParseExact(dueDateString, "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out var fullDate))
+            return fullDate;
+
+        if (DateTime.TryParseExact(dueDateString, "MM-dd", null, System.Globalization.DateTimeStyles.None, out var partialDate))
+            return new DateTime(currentYear, partialDate.Month, partialDate.Day);
+
+        return null;
     }
 
     private async Task<int> HandleListAsync(string name)
@@ -70,13 +86,20 @@ public class AddCommandHandler
         }
     }
 
-    private async Task<int> HandleItemAsync(string subject, string listName, bool star)
+    private async Task<int> HandleItemAsync(string subject, string listName, bool star, string? dueDateString)
     {
         try
         {
             if (string.IsNullOrEmpty(subject))
             {
                 _userInteraction.ShowError("Subject is required to add an item.");
+                return 1;
+            }
+
+            var dueDate = ParseDueDate(dueDateString);
+            if (dueDateString is not null && dueDate is null)
+            {
+                _userInteraction.ShowError($"Invalid due date format. Use yyyy-MM-dd or MM-dd.");
                 return 1;
             }
 
@@ -105,7 +128,8 @@ public class AddCommandHandler
             {
                 Subject = subject,
                 ListId = list.Id,
-                IsImportant = star
+                IsImportant = star,
+                DueDate = dueDate
             });
 
             _userInteraction.ShowSuccess($"Item '{subject}' added to list '{list.Name}' successfully.");

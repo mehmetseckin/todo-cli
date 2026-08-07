@@ -66,6 +66,7 @@ public class JsonOutputFormatter : IOutputFormatter
             item.IsCompleted,
             item.Status,
             Completed = item.Completed?.ToString("yyyy-MM-dd"),
+            DueDate = item.DueDate?.ToString("yyyy-MM-dd"),
             item.ListId,
             DisplayText = noStatus ? item.Subject : item.ToString()
         };

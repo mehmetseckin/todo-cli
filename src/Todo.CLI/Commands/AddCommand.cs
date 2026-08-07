@@ -30,14 +30,16 @@ public class AddCommand : Command
         private static readonly Argument<string> SubjectArgument = new("subject", "The subject of the new to do item.");
         private static readonly Option<string> ListOption = new("--list", "The list to add the to do item to.");
         private static readonly Option<bool> StarOption = new("--star", "Stars (marks as important) the new to do item.");
+        private static readonly Option<string> DueDateOption = new("--due-date", "The due date (yyyy-MM-dd or MM-dd).");
 
         public AddItemCommand(IServiceProvider serviceProvider) : base("item", "Adds a new to do item.")
         {
             AddArgument(SubjectArgument);
             AddOption(ListOption);
             AddOption(StarOption);
+            AddOption(DueDateOption);
 
-            this.SetHandler(AddCommandHandler.Item.Create(serviceProvider), SubjectArgument, ListOption, StarOption);
+            this.SetHandler(AddCommandHandler.Item.Create(serviceProvider), SubjectArgument, ListOption, StarOption, DueDateOption);
         }
     }
 }

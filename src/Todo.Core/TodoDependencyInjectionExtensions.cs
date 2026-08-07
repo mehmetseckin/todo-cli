@@ -30,7 +30,8 @@ public static class TodoDependencyInjectionExtensions
             Status = task.Status?.ToString() ?? "Unknown",
             Completed = task.CompletedDateTime?.ToDateTime(),
             Created = task.CreatedDateTime?.DateTime,
-            ListId = listId
+            ListId = listId,
+            DueDate = task.DueDateTime?.ToDateTime()
         };
     }
 }

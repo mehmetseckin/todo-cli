@@ -200,4 +200,129 @@ public class OutputFormatterTests
         Assert.Equal(_completedItem.Id, secondItem.GetProperty("Id").GetString());
         Assert.Equal(_completedItem.Subject, secondItem.GetProperty("Subject").GetString());
     }
+
+    [Fact]
+    public void JsonFormatter_FormatItem_WithDueDate_IncludesDueDateProperty()
+    {
+        // Arrange
+        var formatter = new JsonOutputFormatter();
+        var item = new TodoItem
+        {
+            Id = "3",
+            Subject = "Item with Due Date",
+            IsCompleted = false,
+            Status = "NotStarted",
+            ListId = "list-1",
+            DueDate = new DateTime(2026, 12, 25)
+        };
+
+        // Act
+        var result = formatter.FormatItem(item, noStatus: false);
+
+        // Assert
+        var jsonDoc = JsonDocument.Parse(result);
+        var root = jsonDoc.RootElement;
+        Assert.True(root.TryGetProperty("DueDate", out var dueDateElement));
+        Assert.Equal("2026-12-25", dueDateElement.GetString());
+    }
+
+    [Fact]
+    public void JsonFormatter_FormatItem_WithoutDueDate_DueDateIsNull()
+    {
+        // Arrange
+        var formatter = new JsonOutputFormatter();
+
+        // Act
+        var result = formatter.FormatItem(_incompleteItem, noStatus: false);
+
+        // Assert
+        var jsonDoc = JsonDocument.Parse(result);
+        var root = jsonDoc.RootElement;
+        Assert.True(root.TryGetProperty("DueDate", out var dueDateElement));
+        Assert.Equal(JsonValueKind.Null, dueDateElement.ValueKind);
+    }
+
+    [Fact]
+    public void JsonFormatter_FormatItem_WithDueDate_IncludesDateInDisplayText()
+    {
+        // Arrange
+        var formatter = new JsonOutputFormatter();
+        var item = new TodoItem
+        {
+            Id = "4",
+            Subject = "Display Item",
+            IsCompleted = false,
+            Status = "NotStarted",
+            ListId = "list-1",
+            DueDate = new DateTime(2026, 6, 15)
+        };
+
+        // Act
+        var result = formatter.FormatItem(item, noStatus: false);
+
+        // Assert
+        var jsonDoc = JsonDocument.Parse(result);
+        var displayText = jsonDoc.RootElement.GetProperty("DisplayText").GetString();
+        Assert.Contains("(06-15)", displayText);
+    }
+
+    [Fact]
+    public void InteractiveFormatter_FormatItem_WithDueDate_IncludesDateInOutput()
+    {
+        // Arrange
+        var formatter = new InteractiveOutputFormatter();
+        var item = new TodoItem
+        {
+            Id = "5",
+            Subject = "Interactive Item",
+            IsCompleted = false,
+            Status = "NotStarted",
+            ListId = "list-1",
+            DueDate = new DateTime(2026, 3, 20)
+        };
+
+        // Act
+        var result = formatter.FormatItem(item, noStatus: false);
+
+        // Assert
+        Assert.Contains("(03-20)", result);
+        Assert.Contains(item.Subject, result);
+    }
+
+    [Fact]
+    public void InteractiveFormatter_FormatItem_WithoutDueDate_ExcludesDateFromOutput()
+    {
+        // Arrange
+        var formatter = new InteractiveOutputFormatter();
+
+        // Act
+        var result = formatter.FormatItem(_incompleteItem, noStatus: false);
+
+        // Assert
+        Assert.DoesNotContain("(", result);
+        Assert.Contains(_incompleteItem.Subject, result);
+    }
+
+    [Fact]
+    public void InteractiveFormatter_FormatItem_WithDueDate_NoStatus_ExcludesDateFromOutput()
+    {
+        // Arrange
+        var formatter = new InteractiveOutputFormatter();
+        var item = new TodoItem
+        {
+            Id = "6",
+            Subject = "No Status Item",
+            IsCompleted = false,
+            Status = "NotStarted",
+            ListId = "list-1",
+            DueDate = new DateTime(2026, 8, 10)
+        };
+
+        // Act
+        var result = formatter.FormatItem(item, noStatus: true);
+
+        // Assert
+        Assert.DoesNotContain("(", result);
+        Assert.Contains(item.Subject, result);
+    }
 } 

@@ -20,14 +20,25 @@ internal class TodoItemRepository : RepositoryBase, ITodoItemRepository
             throw new InvalidOperationException("item needs a ListId to identify the list to add it to.");
 
         var graphServiceClient = new GraphServiceClient(AuthenticationProvider);
-        _ = await graphServiceClient.Me.Todo.Lists[item.ListId].Tasks.PostAsync(new TodoTask
+        var newTask = new TodoTask
         {
             Title = item.Subject,
             Status = item.IsCompleted
                 ? TaskStatus.Completed
                 : TaskStatus.NotStarted,
             Importance = item.IsImportant ? Importance.High : Importance.Normal
-        });
+        };
+
+        if (item.DueDate.HasValue)
+        {
+            newTask.DueDateTime = new DateTimeTimeZone
+            {
+                DateTime = item.DueDate.Value.ToString("yyyy-MM-ddTHH:mm:ss"),
+                TimeZone = TimeZoneInfo.Local.Id
+            };
+        }
+
+        _ = await graphServiceClient.Me.Todo.Lists[item.ListId].Tasks.PostAsync(newTask);
     }
 
     public async Task CompleteAsync(TodoItem item)
