@@ -304,7 +304,7 @@ public class OutputFormatterTests
     }
 
     [Fact]
-    public void InteractiveFormatter_FormatItem_WithDueDate_NoStatus_IncludesDateInOutput()
+    public void InteractiveFormatter_FormatItem_WithDueDate_NoStatus_ExcludesDateFromOutput()
     {
         // Arrange
         var formatter = new InteractiveOutputFormatter();
@@ -322,7 +322,7 @@ public class OutputFormatterTests
         var result = formatter.FormatItem(item, noStatus: true);
 
         // Assert
-        Assert.Contains("(08-10)", result);
+        Assert.DoesNotContain("(", result);
         Assert.Contains(item.Subject, result);
     }
 } 
